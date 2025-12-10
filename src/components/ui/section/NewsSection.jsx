@@ -14,7 +14,7 @@ export default function NewsSection() {
           
           <div className="space-y-4">
             <div className="flex gap-4 items-center hover:bg-gray-50 p-3 rounded-2xl transition cursor-pointer border border-transparent hover:border-gray-100">
-              <div className="bg-gray-200 w-16 h-16 rounded-xl flex-shrink-0 overflow-hidden">
+              <div className="bg-gray-200 w-16 h-16 rounded-xl shrink-0 overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=150" className="w-full h-full object-cover" alt="News"/>
               </div>
               <div>
@@ -23,7 +23,7 @@ export default function NewsSection() {
               </div>
             </div>
             <div className="flex gap-4 items-center hover:bg-gray-50 p-3 rounded-2xl transition cursor-pointer border border-transparent hover:border-gray-100">
-              <div className="bg-gray-200 w-16 h-16 rounded-xl flex-shrink-0 overflow-hidden">
+              <div className="bg-gray-200 w-16 h-16 rounded-xl shrink-0 overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1541355966453-33df57452d3a?q=80&w=150" className="w-full h-full object-cover" alt="News"/>
               </div>
               <div>

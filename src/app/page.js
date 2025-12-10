@@ -1,30 +1,38 @@
+// 1. Import Layout
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
-import HomePage from "@/components/pages/home/HomePage";
 
-// --- API FETCHING ---
+// 2. Import Komponen Tampilan Utama (yang sudah kamu rapikan)
+import HomePage from "@/components/pages/home/HomePage"; 
+
+// 3. Fungsi Fetch Data dari API
 async function getMountains() {
-  const res = await fetch('http://127.0.0.1:8000/api/mountains', { 
-    cache: 'no-store' 
-  });
+  try {
+    // Pastikan URL API backend Laravel benar
+    const res = await fetch('http://127.0.0.1:8000/api/mountains', { 
+      cache: 'no-store' 
+    });
 
-  if (!res.ok) {
-    throw new Error('Gagal mengambil data gunung');
+    if (!res.ok) {
+      throw new Error('Gagal mengambil data gunung');
+    }
+
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error("API Error:", error);
+    return []; // Return array kosong jika error agar web tidak crash
   }
-
-  const json = await res.json();
-  return json.data;
 }
 
+// 4. Komponen Halaman Utama (Wajib export default)
 export default async function Page() {
-  let mountains = [];
-  try {
-    mountains = await getMountains();
-  } catch (error) {
-    console.log("Error Fetching Data: ", error.message);
-  }
+  // Ambil data
+  const mountains = await getMountains();
 
+  // Render Tampilan
   return (
     <FrontpageLayout>
+      {/* Kirim data gunung ke komponen HomePage */}
       <HomePage mountains={mountains} />
     </FrontpageLayout>
   );
