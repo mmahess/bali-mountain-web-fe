@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  /* Mendaftarkan Warna Custom */
+  --color-primary: #4F772D;
+  --color-secondary: #E76F51;
+  --color-bg-soft: #F7F9F4;
+  --color-card-bg: #FFFFFF;
+
+  /* Mendaftarkan Font */
+  --font-sans: var(--font-poppins);
+}
+
+/* Settingan Dasar */
+body {
+  background-color: var(--color-bg-soft);
+  font-family: var(--font-sans);
+}
