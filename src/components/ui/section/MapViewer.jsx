@@ -15,19 +15,15 @@ export default function MapViewer({ mapUrl }) {
 
   return (
     <>
-      {/* --- 1. PREVIEW SIDEBAR --- */}
       <div className="relative h-64 w-full rounded-2xl overflow-hidden shadow-sm border border-gray-100 group bg-gray-100">
-        
-        {/* Iframe Preview - SEKARANG SUDAH INTERAKTIF */}
+
         <iframe
           src={mapUrl}
           className="w-full h-full object-cover"
           frameBorder="0"
-          // style={{ pointerEvents: "none" }}  <-- BARIS INI SAYA HAPUS
           allowFullScreen
         ></iframe>
 
-        {/* Tombol Expand Tetap Ada (Opsional) */}
         <button
           onClick={() => setIsOpen(true)}
           className="absolute top-2 right-2 bg-white/80 backdrop-blur text-gray-700 p-1.5 rounded-lg shadow-sm border border-gray-200 hover:bg-white transition z-10"
@@ -42,7 +38,6 @@ export default function MapViewer({ mapUrl }) {
         </button>
       </div>
 
-      {/* --- 2. MODAL FULLSCREEN --- */}
       {isOpen && (
         <div className="fixed inset-0 z-9999 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
           
