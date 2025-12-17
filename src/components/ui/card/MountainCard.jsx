@@ -37,7 +37,7 @@ export default function MountainCard({ mountain }) {
         </div>
 
         {/* Info Content */}
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-4 flex flex-col grow">
           <div className="flex items-start justify-between mb-1">
              <div>
                 <h3 className="font-bold text-gray-800 text-lg group-hover:text-primary transition line-clamp-1">{mountain.name}</h3>

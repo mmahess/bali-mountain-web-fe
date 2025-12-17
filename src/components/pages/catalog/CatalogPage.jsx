@@ -2,7 +2,7 @@ import MountainCard from "@/components/ui/card/MountainCard";
 
 export default function CatalogPage({ mountains }) {
   return (
-    <div className="bg-[#F7F9F4] min-h-screen pb-20 font-sans text-gray-700">
+    <div className="bg-bg-soft min-h-screen pb-20 font-sans text-gray-700">
         
         {/* --- HEADER PENCARIAN --- */}
         <header className="bg-primary relative overflow-hidden h-48 md:h-56 flex items-center">
