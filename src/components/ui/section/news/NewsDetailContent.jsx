@@ -26,14 +26,12 @@ export default function NewsDetailContent({ news }) {
       </div>
 
       {/* Konten Artikel */}
-      {/* Menggunakan whitespace-pre-line agar enter di database terbaca sebagai paragraf */}
-      <div className="prose max-w-none text-gray-800 font-serif leading-loose text-lg space-y-6 whitespace-pre-line">
-        <p>
-            <span className="font-bold text-5xl float-left mr-3 -mt-2.5 text-primary font-sans">
-                {news.content.charAt(0)}
-            </span>
-            {news.content.substring(1)}
-        </p>
+      <div className="prose prose-lg max-w-none text-gray-800 font-serif leading-loose">
+        {/* Render HTML dari React Quill */}
+        <div 
+            dangerouslySetInnerHTML={{ __html: news.content }} 
+            className="[&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mb-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mb-3 [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>blockquote]:border-l-4 [&>blockquote]:border-primary [&>blockquote]:pl-4 [&>blockquote]:italic [&>img]:rounded-xl [&>img]:my-6"
+        />
       </div>
 
       {/* Share Buttons (Static) */}
