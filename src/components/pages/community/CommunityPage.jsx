@@ -13,7 +13,7 @@ export default function CommunityPage({ data }) {
   const [activePage, setActivePage] = useState("feed");
 
   return (
-    <div className="bg-[#F7F9F4] min-h-screen pb-20 font-sans text-gray-700">
+    <div className="bg-bg-soft min-h-screen pb-20 font-sans text-gray-700">
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
@@ -61,10 +61,10 @@ export default function CommunityPage({ data }) {
                         {/* Input Bar */}
                         <div className="bg-white p-5 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
                             <div className="flex gap-4">
-                                <div className="w-12 h-12 flex-shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
+                                <div className="w-12 h-12 shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
                                      <img src="https://ui-avatars.com/api/?name=Dimas+Anggara" className="w-full h-full object-cover"/>
                                 </div>
-                                <div className="flex-grow min-w-0">
+                                <div className="grow min-w-0">
                                     <input type="text" placeholder="Cari teman nanjak..." className="w-full bg-gray-50 rounded-xl px-5 py-3 text-sm outline-none cursor-pointer hover:bg-gray-100 transition mb-3 border border-transparent focus:bg-white focus:border-green-100" />
                                     <div className="flex flex-wrap justify-between items-center gap-2">
                                         <div className="flex gap-2">
