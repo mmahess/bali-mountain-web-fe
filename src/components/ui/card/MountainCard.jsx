@@ -40,7 +40,7 @@ export default function MountainCard({ mountain }) {
         <div className="p-4 flex flex-col grow">
           <div className="flex items-start justify-between mb-1">
              <div>
-                <h3 className="font-bold text-gray-800 text-lg group-hover:text-primary transition line-clamp-1">{mountain.name}</h3>
+                <h3 className="font-bold text-gray-800 text-lg group-hover:text-primary transition">{mountain.name}</h3>
                 <p className="text-xs text-gray-400 truncate">{mountain.location}</p>
              </div>
              <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded text-yellow-600 text-xs font-bold border border-yellow-100">
@@ -54,10 +54,10 @@ export default function MountainCard({ mountain }) {
                 <span className="w-4 text-center">⛰</span> {mountain.elevation} mdpl
              </div>
              <div className="flex items-center gap-2">
-                <span className="w-4 text-center">📏</span> {mountain.distance} km (Jarak)
+                <span className="w-4 text-center">📏</span> {mountain.distance} km
              </div>
              <div className="flex items-center gap-2">
-                <span className="w-4 text-center">⏱</span> 6-8 Jam (Est)
+                <span className="w-4 text-center">⏱</span> {mountain.estimation_time}
              </div>
           </div>
 

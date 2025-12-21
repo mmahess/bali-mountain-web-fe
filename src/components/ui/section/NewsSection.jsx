@@ -1,82 +1,108 @@
 import Link from "next/link";
 
-export default function NewsSection({ news }) {
-  // Bongkar data news (important & list)
-  const { important, list } = news || {};
-
-  // Fungsi helper format tanggal relative (Contoh: "2 jam yang lalu")
-  const timeAgo = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
+// Fungsi Fetch Data (Langsung di Server Component)
+async function getNews() {
+  try {
+    // PENTING: cache: 'no-store' agar selalu ambil data terbaru (realtime)
+    const res = await fetch("http://127.0.0.1:8000/api/news", { 
+        cache: 'no-store' 
+    });
     
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
-    return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`;
-  };
+    if (!res.ok) throw new Error("Gagal load berita");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetch news:", error);
+    return { data: { hotNews: null, latestNews: [] } };
+  }
+}
+
+export default async function HomeNewsSection() {
+  const { data } = await getNews();
+  const { hotNews, latestNews } = data || {};
+
+  // Ambil 3 berita terbaru saja untuk list samping
+  const sideNews = latestNews ? latestNews.slice(0, 3) : [];
 
   return (
-    <section className="py-12 bg-white border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Berita Terbaru 📰</h2>
+    <section className="py-16 px-4 bg-white font-sans">
+      <div className="max-w-7xl mx-auto">
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          {/* --- BERITA PENTING (BIG CARD) --- */}
-          <div className="md:col-span-2 bg-gray-50 rounded-3xl p-8 border border-gray-100 flex flex-col justify-center relative overflow-hidden group min-h-[300px]">
-            {important ? (
-              <>
-                 {/* Background Image Samar */}
-                 <div className="absolute inset-0 z-0">
-                    <img src={important.thumbnail} className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition duration-700"/>
-                    <div className="absolute inset-0 bg-linear-to-r from-gray-50 via-gray-50/90 to-transparent"></div>
-                 </div>
+        {/* Header Section */}
+        <div className="flex justify-between items-end mb-10">
+            <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Berita & Tips Pendakian 📰</h2>
+                <p className="text-gray-500">Update info jalur, tips survival, dan cerita pendaki.</p>
+            </div>
+            <Link href="/berita" className="text-primary font-bold hover:underline">
+                Lihat Semua →
+            </Link>
+        </div>
 
-                 {/* Blob Hiasan */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 z-0"></div>
-                
-                <div className="relative z-10">
-                    <span className="text-[10px] font-bold text-white bg-red-500 px-3 py-1 rounded-full w-fit mb-4 shadow-lg shadow-red-200 inline-block">
-                        PENTING
-                    </span>
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-gray-800 group-hover:text-primary transition">
-                        {important.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed max-w-lg">
-                        {important.excerpt}
-                    </p>
-                    <Link href={`/berita/${important.slug}`} className="text-primary font-bold text-sm hover:underline flex items-center gap-2">
-                        Baca Selengkapnya <span>→</span>
-                    </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            {/* KIRI: HOT NEWS (Berita Utama) */}
+            {hotNews ? (
+                <div className="group relative rounded-3xl overflow-hidden h-[400px] shadow-md hover:shadow-xl transition">
+                    <img 
+                        src={hotNews.thumbnail} 
+                        alt={hotNews.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
+                        <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-3">
+                            HOT NEWS
+                        </span>
+                        <h3 className="text-2xl font-bold text-white mb-2 leading-tight group-hover:text-green-400 transition">
+                            <Link href={`/berita/${hotNews.slug}`}>{hotNews.title}</Link>
+                        </h3>
+                        <p className="text-gray-300 text-sm line-clamp-2 mb-4">{hotNews.excerpt}</p>
+                        <div className="flex items-center gap-3 text-xs text-gray-400">
+                            <span>📅 {new Date(hotNews.created_at).toLocaleDateString("id-ID")}</span>
+                            <span>👤 {hotNews.user?.name || "Admin"}</span>
+                        </div>
+                    </div>
                 </div>
-              </>
             ) : (
-                <div className="text-center text-gray-400 py-10">Belum ada berita penting.</div>
+                <div className="h-[400px] bg-gray-100 rounded-3xl flex items-center justify-center text-gray-400">
+                    Belum ada berita utama.
+                </div>
             )}
-          </div>
-          
-          {/* --- LIST BERITA LAIN --- */}
-          <div className="space-y-4">
-            {list && list.length > 0 ? (
-                list.map((item) => (
-                    <Link href={`/berita/${item.slug}`} key={item.id} className="flex gap-4 items-center hover:bg-gray-50 p-3 rounded-2xl transition cursor-pointer border border-transparent hover:border-gray-100 group">
-                        <div className="bg-gray-200 w-20 h-20 rounded-xl shrink-0 overflow-hidden shadow-sm">
-                             <img src={item.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+
+            {/* KANAN: LIST BERITA TERBARU */}
+            <div className="flex flex-col gap-6">
+                {sideNews.length > 0 ? (
+                    sideNews.map((news) => (
+                        <div key={news.id} className="flex gap-5 group items-start">
+                            {/* Gambar Kecil */}
+                            <div className="w-32 h-24 shrink-0 rounded-xl overflow-hidden relative">
+                                <img 
+                                    src={news.thumbnail} 
+                                    alt={news.title} 
+                                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                                />
+                            </div>
+                            
+                            {/* Teks */}
+                            <div className="flex-1 py-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-[10px] font-bold text-primary bg-green-50 px-2 py-0.5 rounded">
+                                        {news.category || "Tips"}
+                                    </span>
+                                    <span className="text-[10px] text-gray-400">
+                                        {new Date(news.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long' })}
+                                    </span>
+                                </div>
+                                <h4 className="font-bold text-gray-800 text-lg leading-snug mb-1 group-hover:text-primary transition line-clamp-2">
+                                    <Link href={`/berita/${news.slug}`}>{news.title}</Link>
+                                </h4>
+                                <p className="text-xs text-gray-500 line-clamp-1">{news.excerpt}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 className="font-bold text-sm text-gray-800 line-clamp-2 leading-snug group-hover:text-primary transition">
-                                {item.title}
-                            </h4>
-                            <p className="text-[10px] text-gray-400 mt-2 flex items-center gap-1">
-                                🕒 {timeAgo(item.created_at)}
-                            </p>
-                        </div>
-                    </Link>
-                ))
-            ) : (
-                <div className="text-center text-gray-400 text-sm py-10">Belum ada berita terbaru.</div>
-            )}
-          </div>
+                    ))
+                ) : (
+                    <p className="text-gray-400 italic">Belum ada berita terbaru.</p>
+                )}
+            </div>
 
         </div>
       </div>

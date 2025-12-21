@@ -7,31 +7,38 @@ import JoinedTripCard from "@/components/ui/card/JoinedTripCard";
 import GalleryGrid from "@/components/ui/section/community/GalleryGrid";
 import CreateTripModal from "@/components/ui/modal/CreateTripModal";
 import ManageParticipantsModal from "@/components/ui/modal/ManageParticipantsModal";
-import TripDetailModal from "@/components/ui/modal/TripDetailModal"; // Modal Baru
+import TripDetailModal from "@/components/ui/modal/TripDetailModal";
+import UploadGalleryModal from "@/components/ui/modal/UploadGalleryModal";
 
 export default function CommunityPage({ data }) {
-  const { feed, gallery } = data || {};
+  // Data awal dari Server Component
+  const { feed: initialFeed, gallery: initialGallery } = data || {};
   
   // --- STATE DATA ---
   const [user, setUser] = useState(null);
+  const [feed, setFeed] = useState(initialFeed || []);
+  const [gallery, setGallery] = useState(initialGallery || []);
   const [myTrips, setMyTrips] = useState([]);
   const [joinedTrips, setJoinedTrips] = useState([]);
   
   // --- STATE UI ---
-  const [activePage, setActivePage] = useState("feed"); // 'feed' | 'mytrips' | 'joined'
-  const [activeTab, setActiveTab] = useState("feed");   // 'feed' | 'gallery'
+  const [activePage, setActivePage] = useState("feed"); 
+  const [activeTab, setActiveTab] = useState("feed");   
   
   // --- STATE MODALS ---
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // State Modal Detail
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false); 
   
+  // --- STATE SELECTION ---
   const [tripToEdit, setTripToEdit] = useState(null);   
   const [tripToManage, setTripToManage] = useState(null); 
-  const [selectedTrip, setSelectedTrip] = useState(null); // Trip yang diklik untuk detail
+  const [selectedTrip, setSelectedTrip] = useState(null); 
 
-  // --- LOAD DATA ---
+  // --- 1. LOAD DATA ---
   useEffect(() => {
+    // Ambil data user & token HANYA untuk keperluan logic di page ini (bukan untuk GalleryGrid)
     const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
 
@@ -41,10 +48,13 @@ export default function CommunityPage({ data }) {
       loadMyTrips(token);
       loadJoinedTrips(token);
     }
+    
+    loadGallery(); 
   }, []);
 
+  // --- 2. FUNGSI FETCH API ---
   const loadMyTrips = (token) => {
-    fetch("http://127.0.0.1:8000/api/my-trips", {
+    fetch("http://localhost:8000/api/my-trips", {
         headers: { "Authorization": `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -53,7 +63,7 @@ export default function CommunityPage({ data }) {
   };
 
   const loadJoinedTrips = (token) => {
-    fetch("http://127.0.0.1:8000/api/joined-trips", {
+    fetch("http://localhost:8000/api/joined-trips", {
         headers: { "Authorization": `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -61,7 +71,14 @@ export default function CommunityPage({ data }) {
     .catch(err => console.error("Gagal load joined trips", err));
   };
 
-  // --- HANDLERS ---
+  const loadGallery = () => {
+    fetch("http://localhost:8000/api/galleries")
+    .then(res => res.json())
+    .then(json => { if(json.data) setGallery(json.data); })
+    .catch(err => console.error("Gagal load gallery", err));
+  };
+
+  // --- 3. HANDLERS UI ---
   const handleCreateNew = () => {
     setTripToEdit(null);
     setIsCreateModalOpen(true);
@@ -77,13 +94,12 @@ export default function CommunityPage({ data }) {
     setIsManageModalOpen(true);
   };
 
-  // Handler Buka Detail
   const handleViewDetail = (trip) => {
     setSelectedTrip(trip);
     setIsDetailModalOpen(true);
   };
 
-  // Refresh
+  // --- 4. REFRESH HANDLERS ---
   const handleRefresh = () => {
     const token = localStorage.getItem("token");
     if(token) loadMyTrips(token);
@@ -93,7 +109,10 @@ export default function CommunityPage({ data }) {
   const handleJoinedRefresh = () => {
     const token = localStorage.getItem("token");
     if(token) loadJoinedTrips(token);
-    // window.location.reload(); // Opsional jika ingin update feed realtime
+  };
+
+  const handleGalleryRefresh = () => {
+    loadGallery(); 
   };
 
   return (
@@ -103,7 +122,7 @@ export default function CommunityPage({ data }) {
         
         <div className="flex flex-col md:flex-row gap-8 items-start">
 
-            {/* SIDEBAR */}
+            {/* --- SIDEBAR KIRI --- */}
             <aside className="hidden md:block w-full md:w-1/4 space-y-6 sticky top-24 shrink-0">
                 <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] text-center border border-gray-100">
                     <div className="w-20 h-20 mx-auto rounded-full bg-gray-200 overflow-hidden mb-4 border-4 border-gray-50">
@@ -115,7 +134,10 @@ export default function CommunityPage({ data }) {
                     </div>
                     <h3 className="font-bold text-base text-gray-900">{user?.name || "Tamu"}</h3>
                     <p className="text-xs text-gray-400 mb-4">{user?.email}</p>
-                    <button className="text-xs font-bold text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition w-full">Edit Profil</button>
+                    
+                    <button className="text-xs font-bold text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition w-full">
+                        Edit Profil
+                    </button>
                 </div>
 
                 <div className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 space-y-1">
@@ -131,51 +153,99 @@ export default function CommunityPage({ data }) {
                 </div>
             </aside>
 
-            {/* KONTEN UTAMA */}
+            {/* --- KONTEN TENGAH --- */}
             <div className="flex-1 w-full min-w-0 space-y-6">
 
-                {/* 1. FEED */}
+                {/* 1. HALAMAN FEED */}
                 {activePage === "feed" && (
                     <>
-                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex text-sm font-medium overflow-hidden border border-gray-100 mb-6">
-                            <button onClick={() => setActiveTab("feed")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'feed' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>⛺ Cari Barengan</button>
-                            <button onClick={() => setActiveTab("gallery")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'gallery' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>📸 Galeri Momen</button>
+                        {/* INPUT BAR (UPLOAD FOTO & BUAT AJAKAN) */}
+                        <div className="bg-white p-5 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
+                            <div className="flex gap-4">
+                                <div className="w-12 h-12 shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
+                                     <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'G'}&background=random`} className="w-full h-full object-cover"/>
+                                </div>
+                                <div className="grow min-w-0">
+                                    <div className="w-full bg-gray-50 rounded-xl px-5 py-3 text-sm text-gray-500 mb-3 border border-transparent">
+                                        Halo {user?.name?.split(' ')[0] || 'Pendaki'}, ada rencana muncak kemana?
+                                    </div>
+                                    <div className="flex flex-wrap justify-between items-center gap-2">
+                                        <div className="flex gap-2">
+                                            <button 
+                                                onClick={() => setIsUploadModalOpen(true)}
+                                                className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition"
+                                            >
+                                                📷 Upload Foto
+                                            </button>
+                                            
+                                            <button 
+                                                onClick={handleCreateNew}
+                                                className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition"
+                                            >
+                                                📅 Buat Ajakan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
+                        {/* TAB SWITCHER */}
+                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex text-sm font-medium overflow-hidden border border-gray-100 mb-6">
+                            <button onClick={() => setActiveTab("feed")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'feed' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                ⛺ Cari Barengan
+                            </button>
+                            <button onClick={() => setActiveTab("gallery")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'gallery' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                📸 Galeri Momen
+                            </button>
+                        </div>
+
+                        {/* KONTEN TAB */}
                         {activeTab === "feed" ? (
                             <div className="space-y-5">
                                 <div className="flex justify-between items-center px-2">
                                     <h3 className="font-bold text-gray-800">Ajakan Terbaru</h3>
-                                    <button onClick={handleCreateNew} className="text-primary text-xs font-bold hover:underline">+ Buat Ajakan</button>
                                 </div>
+
                                 {feed && feed.length > 0 ? (
                                     feed.map((trip) => (
                                         <FeedTripCard 
                                             key={trip.id} 
                                             trip={trip} 
                                             currentUser={user} 
-                                            onDetail={handleViewDetail} // <--- Pass Handler
+                                            onDetail={handleViewDetail} 
                                         />
                                     ))
                                 ) : (
-                                    <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200"><p className="text-gray-500 text-sm">Belum ada ajakan.</p></div>
+                                    <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                                        <div className="text-4xl mb-3">⛺</div>
+                                        <p className="text-gray-500 text-sm font-medium">Belum ada ajakan pendakian.</p>
+                                    </div>
                                 )}
                             </div>
                         ) : (
+                            /* KONTEN GALERI */
+                            /* PERBAIKAN DISINI: Menghapus token={token} dan currentUser={user} */
                             <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
-                                <GalleryGrid gallery={gallery} />
+                                <GalleryGrid 
+                                    gallery={gallery} 
+                                    refreshData={loadGallery}
+                                />
                             </div>
                         )}
                     </>
                 )}
 
-                {/* 2. MY TRIPS */}
+                {/* 2. HALAMAN AJAKAN SAYA */}
                 {activePage === "mytrips" && (
                     <div className="space-y-6 animate-in fade-in">
                         <div className="flex justify-between items-center mb-2">
                             <h2 className="text-2xl font-bold text-gray-900">Manajemen Ajakan 🎫</h2>
-                            <button onClick={handleCreateNew} className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-green-700 shadow-md transition">+ Buat Baru</button>
+                            <button onClick={handleCreateNew} className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-green-700 shadow-md transition">
+                                + Buat Baru
+                            </button>
                         </div>
+
                         {myTrips && myTrips.length > 0 ? (
                             myTrips.map((trip) => (
                                 <MyTripCard 
@@ -187,15 +257,21 @@ export default function CommunityPage({ data }) {
                                 />
                             ))
                         ) : (
-                            <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200"><p className="text-gray-400 text-sm">Belum ada ajakan.</p></div>
+                            <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                                <p className="text-gray-400 text-sm">Anda belum membuat ajakan pendakian.</p>
+                                <button onClick={handleCreateNew} className="mt-4 text-primary font-bold text-sm hover:underline">
+                                    Buat sekarang yuk!
+                                </button>
+                            </div>
                         )}
                     </div>
                 )}
 
-                {/* 3. JOINED TRIPS */}
+                {/* 3. HALAMAN TRIP DIIKUTI */}
                 {activePage === "joined" && (
                     <div className="space-y-6 animate-in fade-in">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Rombongan Diikuti 🎒</h2>
+                        
                         {joinedTrips && joinedTrips.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {joinedTrips.map((trip) => (
@@ -203,14 +279,16 @@ export default function CommunityPage({ data }) {
                                         key={trip.id} 
                                         trip={trip} 
                                         onLeaveSuccess={handleJoinedRefresh}
-                                        onDetail={handleViewDetail} // <--- Pass Handler
+                                        onDetail={handleViewDetail} 
                                     />
                                 ))}
                             </div>
                         ) : (
                             <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
                                 <p className="text-gray-400 text-sm">Belum bergabung ke trip manapun.</p>
-                                <button onClick={() => setActivePage("feed")} className="mt-4 text-primary font-bold text-sm hover:underline">Cari Barengan</button>
+                                <button onClick={() => setActivePage("feed")} className="mt-4 text-primary font-bold text-sm hover:underline">
+                                    Cari Barengan
+                                </button>
                             </div>
                         )}
                     </div>
@@ -219,7 +297,7 @@ export default function CommunityPage({ data }) {
             </div>
         </div>
 
-        {/* --- MODALS --- */}
+        {/* --- MODAL POPUPS --- */}
         <CreateTripModal 
             isOpen={isCreateModalOpen} 
             onClose={() => setIsCreateModalOpen(false)}
@@ -233,13 +311,18 @@ export default function CommunityPage({ data }) {
             tripId={tripToManage}
         />
 
-        {/* MODAL DETAIL BARU */}
         <TripDetailModal 
             isOpen={isDetailModalOpen}
             onClose={() => setIsDetailModalOpen(false)}
             trip={selectedTrip}
             currentUser={user}
             onActionSuccess={handleRefresh}
+        />
+
+        <UploadGalleryModal 
+            isOpen={isUploadModalOpen} 
+            onClose={() => setIsUploadModalOpen(false)}
+            onSuccess={handleGalleryRefresh}
         />
 
       </main>
