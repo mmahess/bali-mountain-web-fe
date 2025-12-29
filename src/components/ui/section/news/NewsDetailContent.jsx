@@ -3,6 +3,15 @@ import Link from "next/link";
 export default function NewsDetailContent({ news }) {
   if (!news) return null;
 
+  // --- HELPER URL GAMBAR (Update Penting) ---
+  const getImageUrl = (path) => {
+    if (!path) return "https://placehold.co/1200x600?text=No+Image";
+    // Jika path sudah berupa URL lengkap (misal dari internet), biarkan
+    if (path.startsWith("http")) return path;
+    // Jika path dari upload lokal, tambahkan prefix storage backend
+    return `http://127.0.0.1:8000/storage/${path}`;
+  };
+
   // Format Tanggal
   const date = new Date(news.created_at).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -14,9 +23,10 @@ export default function NewsDetailContent({ news }) {
     <article className="lg:col-span-2">
       
       {/* Gambar Utama */}
-      <div className="rounded-2xl overflow-hidden mb-8 shadow-lg">
+      <div className="rounded-2xl overflow-hidden mb-8 shadow-lg bg-gray-100">
         <img 
-            src={news.thumbnail || "https://placehold.co/1200x600"} 
+            // GUNAKAN HELPER DISINI
+            src={getImageUrl(news.thumbnail)} 
             alt={news.title} 
             className="w-full h-auto object-cover"
         />

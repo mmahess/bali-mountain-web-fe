@@ -28,12 +28,6 @@ export default function NewsPage({ data }) {
             <section>
                 <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-200 pb-4 mb-8 gap-4">
                     <h3 className="font-bold text-xl md:text-2xl text-gray-900">Artikel Terbaru</h3>
-                    <div className="flex flex-wrap gap-2">
-                        <button className="text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-full shadow-sm hover:bg-green-700 transition">Semua</button>
-                        <button className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition">Tips</button>
-                        <button className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition">Info Jalur</button>
-                        <button className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition">Gear</button>
-                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

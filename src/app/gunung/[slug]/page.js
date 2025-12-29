@@ -1,6 +1,5 @@
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import MapViewer from "@/components/ui/section/MapViewer";
-// 1. IMPORT COMPONENT REVIEW BARU
 import MountainReviews from "@/components/ui/section/detail/MountainReviews"; 
 import Link from "next/link";
 
@@ -36,16 +35,24 @@ export default async function MountainDetailPage({ params }) {
 
   const isWajibGuide = mountain.is_guide_required == 1 || mountain.is_guide_required === true;
 
+  // --- HELPER BARU: GENERATE URL GAMBAR ---
+  const getImageUrl = (path) => {
+    if (!path) return "https://placehold.co/1200x600"; // Placeholder jika kosong
+    if (path.startsWith("http")) return path; // Jika sudah URL lengkap (misal dari unsplash)
+    return `http://127.0.0.1:8000/storage/${path}`; // Tambahkan prefix backend
+  };
+
   return (
     <FrontpageLayout>
       <div className="bg-bg-soft min-h-screen pb-20 font-sans text-gray-700">
         
         {/* HERO HEADER */}
-        <header className="relative h-[400px] md:h-[500px] w-full">
+        <header className="relative h-[400px] md:h-[500px] w-full bg-gray-900">
           <img 
-            src={mountain.cover_image || "https://placehold.co/1200x600"} 
+            // GUNAKAN HELPER DI SINI
+            src={getImageUrl(mountain.cover_image)}
             alt={mountain.name} 
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover opacity-90"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
 
@@ -113,7 +120,7 @@ export default async function MountainDetailPage({ params }) {
                         </div>
                     </section>
 
-                    {/* Galeri */}
+                    {/* Galeri (Jika ada API image_url yg sudah full, biarkan. Jika path, gunakan getImageUrl juga) */}
                     <section>
                         <h2 className="text-xl font-bold text-gray-900 mb-4">Galeri Foto</h2>
                         {mountain.images && mountain.images.length > 0 ? (
@@ -121,7 +128,9 @@ export default async function MountainDetailPage({ params }) {
                                 {mountain.images.map((img, index) => (
                                     <div key={index} className="h-32 w-full rounded-xl overflow-hidden relative group">
                                         <img 
-                                            src={img.image_url} 
+                                            // Asumsi: img.image_url sudah full URL dari backend/resource. 
+                                            // Jika belum, gunakan: getImageUrl(img.path)
+                                            src={img.image_url || getImageUrl(img.path)} 
                                             alt={`Galeri ${index + 1}`} 
                                             className="w-full h-full object-cover hover:scale-110 transition duration-500 cursor-pointer"
                                         />
@@ -135,7 +144,7 @@ export default async function MountainDetailPage({ params }) {
                         )}
                     </section>
 
-                    {/* 2. GANTI BAGIAN ULASAN LAMA DENGAN COMPONENT BARU */}
+                    {/* Component Ulasan */}
                     <MountainReviews 
                         mountainId={mountain.id} 
                         initialReviews={mountain.reviews} 

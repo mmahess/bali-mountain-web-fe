@@ -1,16 +1,26 @@
 import Link from "next/link";
 
 export default function NewsCard({ news }) {
-  // Helper kategori random (karena di DB belum ada kolom kategori)
-  const categories = ["TIPS & TRIK", "INFO JALUR", "GEAR REVIEW", "EVENT"];
-  const randomCat = categories[Math.floor(Math.random() * categories.length)];
+  // --- PERBAIKAN: Hapus logika random category ---
   
-  // Helper warna kategori
+  // Helper warna kategori berdasarkan isi data
   const getCatColor = (cat) => {
-      if(cat === "INFO JALUR") return "text-blue-600";
-      if(cat === "GEAR REVIEW") return "text-orange-600";
-      return "text-primary";
+      if (!cat) return "text-primary";
+      
+      const lowerCat = cat.toLowerCase();
+      if(lowerCat.includes("info jalur")) return "text-blue-600";
+      if(lowerCat.includes("review")) return "text-orange-600";
+      if(lowerCat.includes("event")) return "text-purple-600";
+      
+      return "text-primary"; // Default Hijau (untuk Tips, Cerita, dll)
   }
+
+  // Helper URL Gambar
+  const getImageUrl = (path) => {
+    if (!path) return "https://placehold.co/600x400?text=No+Image";
+    if (path.startsWith("http")) return path;
+    return `http://127.0.0.1:8000/storage/${path}`;
+  };
 
   return (
     <Link href={`/berita/${news.slug}`} className="block h-full">
@@ -19,13 +29,14 @@ export default function NewsCard({ news }) {
         {/* Gambar Thumbnail */}
         <div className="h-48 overflow-hidden relative">
             <img 
-                src={news.thumbnail || "https://placehold.co/600x400"} 
+                src={getImageUrl(news.thumbnail)} 
                 alt={news.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
             />
             <div className="absolute top-3 left-3">
-                 <span className={`text-[10px] font-bold ${getCatColor(randomCat)} bg-white/90 backdrop-blur px-2 py-1 rounded shadow-sm`}>
-                    {randomCat}
+                 {/* GUNAKAN KATEGORI ASLI DARI DATABASE */}
+                 <span className={`text-[10px] font-bold ${getCatColor(news.category)} bg-white/90 backdrop-blur px-2 py-1 rounded shadow-sm uppercase`}>
+                    {news.category || "UMUM"}
                  </span>
             </div>
         </div>
@@ -33,7 +44,7 @@ export default function NewsCard({ news }) {
         {/* Konten */}
         <div className="p-5 flex flex-col grow">
             <div className="text-[10px] text-gray-400 mb-2 flex items-center gap-2">
-                <span>📅 {new Date(news.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long' })}</span>
+                <span>📅 {new Date(news.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
             <h4 className="text-lg font-bold text-gray-800 mb-3 group-hover:text-primary transition line-clamp-2 leading-snug">
                 {news.title}

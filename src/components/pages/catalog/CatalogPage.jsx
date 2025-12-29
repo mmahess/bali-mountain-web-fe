@@ -185,7 +185,7 @@ export default function CatalogPage({ mountains }) {
                 
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <p className="text-sm text-gray-500">
-                        Menampilkan <span className="font-bold text-gray-800">{filteredMountains.length}</span> gunung
+                        Menampilkan <span className="font-bold text-gray-800">{filteredMountains.length}</span> jalur gunung
                     </p>
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-500 hidden sm:block">Urutkan:</span>

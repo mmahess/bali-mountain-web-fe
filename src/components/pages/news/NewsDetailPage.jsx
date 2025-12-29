@@ -1,14 +1,84 @@
+"use client";
+
 import Link from "next/link";
 import NewsSidebar from "@/components/ui/section/news/NewsSidebar";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function NewsDetailPage({ newsDetail, newsList }) {
+  // State untuk Komentar & User
+  const [comments, setComments] = useState(newsDetail?.comments || []);
+  const [input, setInput] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Ambil user dari localStorage saat component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setCurrentUser(JSON.parse(storedUser));
+  }, []);
+
   if (!newsDetail) return null;
 
-  // Format Tanggal
+  // --- HELPER URL GAMBAR (Agar gambar tidak broken) ---
+  const getImageUrl = (path) => {
+    if (!path) return "https://placehold.co/1200x600?text=No+Image";
+    if (path.startsWith("http")) return path;
+    return `http://127.0.0.1:8000/storage/${path}`;
+  };
+
+  const getAvatarUrl = (user) => {
+    if (!user) return "https://ui-avatars.com/api/?name=User";
+    if (user.avatar && !user.avatar.startsWith("http")) {
+        return `http://127.0.0.1:8000/storage/${user.avatar}`;
+    }
+    return user.avatar || `https://ui-avatars.com/api/?name=${user.name}`;
+  };
+
+  // --- HANDLER POST KOMENTAR ---
+  const handlePostComment = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return toast.error("Silakan login dulu 🔒");
+    if (!input.trim()) return toast.error("Komentar tidak boleh kosong");
+
+    setIsSubmitting(true);
+    try {
+        const res = await axios.post(`http://127.0.0.1:8000/api/news/${newsDetail.id}/comments`, 
+            { body: input },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // Tambahkan komentar baru ke state (paling atas)
+        setComments([res.data.data, ...comments]);
+        setInput("");
+        toast.success("Komentar terkirim! 💬");
+    } catch (error) {
+        console.error(error);
+        toast.error("Gagal mengirim komentar");
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
+
+  // --- HANDLER HAPUS KOMENTAR ---
+  const handleDeleteComment = async (id) => {
+    if (!confirm("Hapus komentar ini?")) return;
+    const token = localStorage.getItem("token");
+    
+    try {
+        await axios.delete(`http://127.0.0.1:8000/api/news/comments/${id}`, {
+            headers: { Authorization: `Bearer ${token}` } 
+        });
+        setComments(comments.filter(c => c.id !== id));
+        toast.success("Komentar dihapus 🗑️");
+    } catch (error) {
+        toast.error("Gagal menghapus");
+    }
+  };
+
+  // Format Tanggal Artikel
   const date = new Date(newsDetail.created_at).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+    day: "numeric", month: "long", year: "numeric",
   });
 
   return (
@@ -17,30 +87,25 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
         {/* --- HEADER --- */}
         <header className="bg-white pt-10 pb-8 border-b border-gray-100">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                {/* Breadcrumb & Kategori */}
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-4 font-medium">
                     <Link href="/berita" className="hover:text-primary">Berita</Link>
                     <span>/</span>
                     <span className="text-primary font-bold">{newsDetail.category || "Tips & Trik"}</span>
                 </div>
 
-                {/* Judul Artikel */}
                 <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
                     {newsDetail.title}
                 </h1>
 
-                {/* Meta Info (Penulis & Tanggal) */}
                 <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
-                        {/* Avatar Penulis (Dinamis) */}
                         <img 
-                            src={newsDetail.user?.avatar || `https://ui-avatars.com/api/?name=${newsDetail.user?.name || 'Admin'}&background=random`} 
+                            src={getAvatarUrl(newsDetail.user)} 
                             className="w-8 h-8 rounded-full border border-gray-200 object-cover"
                             alt="Penulis"
                         />
-                        {/* Nama Penulis (Dinamis) */}
                         <span className="font-bold text-gray-900">
-                            {newsDetail.user?.name || "Admin JejakKaki"}
+                            {newsDetail.user?.name || "Admin"}
                         </span>
                     </div>
                     <span>•</span>
@@ -59,7 +124,7 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
                     {/* Gambar Cover */}
                     <div className="rounded-2xl overflow-hidden mb-8 shadow-lg bg-gray-100">
                         <img 
-                            src={newsDetail.thumbnail || "https://placehold.co/1200x600"} 
+                            src={getImageUrl(newsDetail.thumbnail)} 
                             alt={newsDetail.title} 
                             className="w-full h-auto object-cover"
                         />
@@ -68,7 +133,7 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
                         </p>
                     </div>
 
-                    {/* Isi Artikel (HTML Rendered) */}
+                    {/* Isi Artikel */}
                     <div className="prose prose-lg max-w-none text-gray-800 font-serif leading-loose">
                         <div 
                             dangerouslySetInnerHTML={{ __html: newsDetail.content }} 
@@ -86,7 +151,7 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
                         />
                     </div>
 
-                    {/* Share Buttons (Static) */}
+                    {/* Share Buttons */}
                     <div className="border-y border-gray-200 py-6 mt-10 flex flex-col md:flex-row justify-between items-center gap-4 font-sans">
                         <p className="text-sm font-bold text-gray-500">Bagikan artikel ini:</p>
                         <div className="flex gap-3">
@@ -97,11 +162,79 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
                         </div>
                     </div>
 
-                    {/* Komentar Section (Static Placeholder) */}
+                    {/* --- KOMENTAR SECTION (DINAMIS) --- */}
                     <div className="mt-10 font-sans">
-                        <h3 className="text-xl font-bold text-gray-900 mb-6">Komentar</h3>
-                        <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                            <p className="text-gray-400 text-sm">Fitur komentar segera hadir.</p>
+                        <h3 className="text-xl font-bold text-gray-900 mb-6">Komentar ({comments.length})</h3>
+                        
+                        {/* Form Input */}
+                        <div className="flex gap-4 mb-10">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100 shrink-0">
+                                <img 
+                                    src={getAvatarUrl(currentUser)} 
+                                    className="w-full h-full object-cover"
+                                    alt="Saya"
+                                />
+                            </div>
+                            <div className="grow">
+                                <textarea 
+                                    className="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition h-24 mb-2" 
+                                    placeholder={currentUser ? "Tulis tanggapanmu..." : "Silakan login untuk berkomentar..."}
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    disabled={!currentUser || isSubmitting}
+                                ></textarea>
+                                <button 
+                                    onClick={handlePostComment}
+                                    disabled={!currentUser || isSubmitting || !input.trim()}
+                                    className="bg-primary text-white text-xs font-bold px-6 py-2.5 rounded-lg hover:bg-green-700 float-right transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-100"
+                                >
+                                    {isSubmitting ? "Mengirim..." : "Kirim Komentar"}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* List Komentar */}
+                        <div className="space-y-6">
+                            {comments.length > 0 ? (
+                                comments.map((comment) => (
+                                    <div key={comment.id} className="flex gap-4 border-b border-gray-50 pb-6 last:border-0 animate-in fade-in slide-in-from-bottom-2">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100 shrink-0">
+                                            <img 
+                                                src={getAvatarUrl(comment.user)} 
+                                                className="w-full h-full object-cover" 
+                                                alt={comment.user?.name}
+                                            />
+                                        </div>
+                                        <div className="grow">
+                                            <div className="flex justify-between items-start mb-1">
+                                                <div>
+                                                    <h4 className="font-bold text-sm text-gray-900">{comment.user?.name || "User"}</h4>
+                                                    <p className="text-[10px] text-gray-400">
+                                                        {new Date(comment.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                    </p>
+                                                </div>
+                                                
+                                                {/* Tombol Hapus (Milik sendiri / Admin) */}
+                                                {currentUser && (currentUser.id === comment.user_id || currentUser.role === 'admin') && (
+                                                    <button 
+                                                        onClick={() => handleDeleteComment(comment.id)}
+                                                        className="text-red-400 hover:text-red-600 text-xs font-bold hover:underline transition"
+                                                    >
+                                                        Hapus
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                                                {comment.body}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                                    <p className="text-gray-400 text-sm">Belum ada komentar. Jadilah yang pertama!</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 

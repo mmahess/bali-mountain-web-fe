@@ -16,6 +16,13 @@ async function getNews() {
   }
 }
 
+// --- HELPER URL GAMBAR ---
+const getImageUrl = (path) => {
+  if (!path) return "https://placehold.co/600x400?text=No+Image";
+  if (path.startsWith("http")) return path;
+  return `http://127.0.0.1:8000/storage/${path}`;
+};
+
 export default async function HomeNewsSection() {
   const { data } = await getNews();
   const { hotNews, latestNews } = data || {};
@@ -44,7 +51,8 @@ export default async function HomeNewsSection() {
             {hotNews ? (
                 <div className="group relative rounded-3xl overflow-hidden h-[400px] shadow-md hover:shadow-xl transition">
                     <img 
-                        src={hotNews.thumbnail} 
+                        // GUNAKAN HELPER DISINI
+                        src={getImageUrl(hotNews.thumbnail)} 
                         alt={hotNews.title} 
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                     />
@@ -76,7 +84,8 @@ export default async function HomeNewsSection() {
                             {/* Gambar Kecil */}
                             <div className="w-32 h-24 shrink-0 rounded-xl overflow-hidden relative">
                                 <img 
-                                    src={news.thumbnail} 
+                                    // GUNAKAN HELPER DISINI JUGA
+                                    src={getImageUrl(news.thumbnail)} 
                                     alt={news.title} 
                                     className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                                 />
