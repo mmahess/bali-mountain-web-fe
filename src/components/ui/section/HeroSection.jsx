@@ -10,28 +10,17 @@ export default function HeroSection() {
           </span>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight text-gray-900 mb-6">
             Cari Teman Muncak <br />
-            <span className="text-primary">Jadi Lebih Mudah.</span>
+            <span className="text-primary">Jadi Lebih Mudah</span>
           </h1>
           <p className="text-gray-500 mb-8 text-base leading-relaxed max-w-lg">
             Tidak punya tim buat nanjak? Temukan barengan pendakian yang cocok atau gabung open trip terpercaya di sini.
           </p>
-          
-          <div className="bg-gray-50 p-2 rounded-2xl border border-gray-200 flex flex-col sm:flex-row gap-2 max-w-md mx-auto md:mx-0 shadow-sm">
-            <input 
-              type="text" 
-              placeholder="Mau nanjak ke mana?" 
-              className="flex-1 px-4 py-3 bg-transparent outline-none text-sm font-medium text-gray-700 placeholder-gray-400" 
-            />
-            <button className="bg-secondary text-white rounded-xl px-8 py-3 font-bold hover:bg-orange-600 transition text-sm shadow-lg shadow-orange-200">
-              Cari
-            </button>
-          </div>
         </div>
 
         <div className="w-full md:w-1/2 flex justify-center md:justify-end">
           <div className="relative w-full max-w-lg h-64 md:h-96 overflow-hidden rounded-4xl shadow-2xl">
             <img 
-              src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=1000&auto=format&fit=crop" 
+              src="/gunung-agung-simpang-jodoh.jpg" 
               alt="Hiking Group" 
               className="w-full h-full object-cover object-center transform hover:scale-105 transition duration-700"
             />

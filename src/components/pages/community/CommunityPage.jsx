@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast"; // <--- 1. TAMBAHKAN IMPORT INI
 import FeedTripCard from "@/components/ui/card/FeedTripCard";
 import MyTripCard from "@/components/ui/card/MyTripCard"; 
 import JoinedTripCard from "@/components/ui/card/JoinedTripCard"; 
@@ -11,34 +12,27 @@ import TripDetailModal from "@/components/ui/modal/TripDetailModal";
 import UploadGalleryModal from "@/components/ui/modal/UploadGalleryModal";
 
 export default function CommunityPage({ data }) {
-  // Data awal dari Server Component
   const { feed: initialFeed, gallery: initialGallery } = data || {};
   
-  // --- STATE DATA ---
   const [user, setUser] = useState(null);
   const [feed, setFeed] = useState(initialFeed || []);
   const [gallery, setGallery] = useState(initialGallery || []);
   const [myTrips, setMyTrips] = useState([]);
   const [joinedTrips, setJoinedTrips] = useState([]);
   
-  // --- STATE UI ---
   const [activePage, setActivePage] = useState("feed"); 
   const [activeTab, setActiveTab] = useState("feed");   
   
-  // --- STATE MODALS ---
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false); 
   
-  // --- STATE SELECTION ---
   const [tripToEdit, setTripToEdit] = useState(null);   
   const [tripToManage, setTripToManage] = useState(null); 
   const [selectedTrip, setSelectedTrip] = useState(null); 
 
-  // --- 1. LOAD DATA ---
   useEffect(() => {
-    // Ambil data user & token HANYA untuk keperluan logic di page ini (bukan untuk GalleryGrid)
     const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
 
@@ -52,7 +46,6 @@ export default function CommunityPage({ data }) {
     loadGallery(); 
   }, []);
 
-  // --- 2. FUNGSI FETCH API ---
   const loadMyTrips = (token) => {
     fetch("http://localhost:8000/api/my-trips", {
         headers: { "Authorization": `Bearer ${token}` }
@@ -78,10 +71,23 @@ export default function CommunityPage({ data }) {
     .catch(err => console.error("Gagal load gallery", err));
   };
 
-  // --- 3. HANDLERS UI ---
+  // --- 2. HANDLERS DENGAN PENGECEKAN LOGIN ---
+  
   const handleCreateNew = () => {
+    // Cek Login
+    if (!user) {
+        return toast.error("Silakan buat akun dulu untuk membuat ajakan trip!");
+    }
     setTripToEdit(null);
     setIsCreateModalOpen(true);
+  };
+
+  const handleUploadClick = () => {
+    // Cek Login
+    if (!user) {
+        return toast.error("Silakan login dulu untuk upload foto!");
+    }
+    setIsUploadModalOpen(true);
   };
 
   const handleEditTrip = (trip) => {
@@ -99,7 +105,6 @@ export default function CommunityPage({ data }) {
     setIsDetailModalOpen(true);
   };
 
-  // --- 4. REFRESH HANDLERS ---
   const handleRefresh = () => {
     const token = localStorage.getItem("token");
     if(token) loadMyTrips(token);
@@ -122,7 +127,7 @@ export default function CommunityPage({ data }) {
         
         <div className="flex flex-col md:flex-row gap-8 items-start">
 
-            {/* --- SIDEBAR KIRI --- */}
+            {/* SIDEBAR KIRI */}
             <aside className="hidden md:block w-full md:w-1/4 space-y-6 sticky top-24 shrink-0">
                 <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] text-center border border-gray-100">
                     <div className="w-20 h-20 mx-auto rounded-full bg-gray-200 overflow-hidden mb-4 border-4 border-gray-50">
@@ -133,33 +138,37 @@ export default function CommunityPage({ data }) {
                         />
                     </div>
                     <h3 className="font-bold text-base text-gray-900">{user?.name || "Tamu"}</h3>
-                    <p className="text-xs text-gray-400 mb-4">{user?.email}</p>
+                    <p className="text-xs text-gray-400 mb-4">{user?.email || "Yuk login dulu"}</p>
                     
-                    <button className="text-xs font-bold text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition w-full">
-                        Edit Profil
-                    </button>
+                    {/* Tombol Edit Profil hanya aktif jika user login */}
+                    {user && (
+                        <button className="text-xs font-bold text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition w-full">
+                            Edit Profil
+                        </button>
+                    )}
                 </div>
 
                 <div className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 space-y-1">
                     <button onClick={() => setActivePage("feed")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'feed' ? 'bg-green-50 text-primary font-bold border-l-4 border-primary' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
                         <span>🏔</span> Feed Komunitas
                     </button>
-                    <button onClick={() => setActivePage("mytrips")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'mytrips' ? 'bg-green-50 text-primary font-bold border-l-4 border-primary' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
+                    
+                    {/* Menu Ajakan Saya & Joined disembunyikan atau diberi alert jika belum login */}
+                    <button onClick={() => user ? setActivePage("mytrips") : toast.error("Login dulu untuk melihat ini")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'mytrips' ? 'bg-green-50 text-primary font-bold border-l-4 border-primary' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
                         <span>🎫</span> Ajakan Saya
                     </button>
-                    <button onClick={() => setActivePage("joined")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'joined' ? 'bg-blue-50 text-blue-600 font-bold border-l-4 border-blue-500' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
+                    <button onClick={() => user ? setActivePage("joined") : toast.error("Login dulu untuk melihat ini")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'joined' ? 'bg-blue-50 text-blue-600 font-bold border-l-4 border-blue-500' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
                         <span>🎒</span> Trip Diikuti
                     </button>
                 </div>
             </aside>
 
-            {/* --- KONTEN TENGAH --- */}
+            {/* KONTEN TENGAH */}
             <div className="flex-1 w-full min-w-0 space-y-6">
 
-                {/* 1. HALAMAN FEED */}
+                {/* HALAMAN FEED */}
                 {activePage === "feed" && (
                     <>
-                        {/* INPUT BAR (UPLOAD FOTO & BUAT AJAKAN) */}
                         <div className="bg-white p-5 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
                             <div className="flex gap-4">
                                 <div className="w-12 h-12 shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
@@ -171,8 +180,9 @@ export default function CommunityPage({ data }) {
                                     </div>
                                     <div className="flex flex-wrap justify-between items-center gap-2">
                                         <div className="flex gap-2">
+                                            {/* 3. PANGGIL HANDLER BARU DI SINI */}
                                             <button 
-                                                onClick={() => setIsUploadModalOpen(true)}
+                                                onClick={handleUploadClick}
                                                 className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition"
                                             >
                                                 📷 Upload Foto
@@ -190,7 +200,6 @@ export default function CommunityPage({ data }) {
                             </div>
                         </div>
 
-                        {/* TAB SWITCHER */}
                         <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex text-sm font-medium overflow-hidden border border-gray-100 mb-6">
                             <button onClick={() => setActiveTab("feed")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'feed' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
                                 ⛺ Cari Barengan
@@ -200,7 +209,6 @@ export default function CommunityPage({ data }) {
                             </button>
                         </div>
 
-                        {/* KONTEN TAB */}
                         {activeTab === "feed" ? (
                             <div className="space-y-5">
                                 <div className="flex justify-between items-center px-2">
@@ -224,8 +232,6 @@ export default function CommunityPage({ data }) {
                                 )}
                             </div>
                         ) : (
-                            /* KONTEN GALERI */
-                            /* PERBAIKAN DISINI: Menghapus token={token} dan currentUser={user} */
                             <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
                                 <GalleryGrid 
                                     gallery={gallery} 
@@ -236,7 +242,7 @@ export default function CommunityPage({ data }) {
                     </>
                 )}
 
-                {/* 2. HALAMAN AJAKAN SAYA */}
+                {/* HALAMAN AJAKAN SAYA */}
                 {activePage === "mytrips" && (
                     <div className="space-y-6 animate-in fade-in">
                         <div className="flex justify-between items-center mb-2">
@@ -267,7 +273,7 @@ export default function CommunityPage({ data }) {
                     </div>
                 )}
 
-                {/* 3. HALAMAN TRIP DIIKUTI */}
+                {/* HALAMAN TRIP DIIKUTI */}
                 {activePage === "joined" && (
                     <div className="space-y-6 animate-in fade-in">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Rombongan Diikuti 🎒</h2>
@@ -297,7 +303,7 @@ export default function CommunityPage({ data }) {
             </div>
         </div>
 
-        {/* --- MODAL POPUPS --- */}
+        {/* MODAL POPUPS */}
         <CreateTripModal 
             isOpen={isCreateModalOpen} 
             onClose={() => setIsCreateModalOpen(false)}

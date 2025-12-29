@@ -80,24 +80,6 @@ export default function AdminLayout({ children }) {
             <span className="w-5 text-center">📰</span> Berita & Tips
           </Link>
 
-          {/* GROUP 3: COMMUNITY (Placeholder) */}
-          <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 mt-6">Komunitas</p>
-          
-          <Link href="/admin/users" className={getLinkClass('/admin/users')}>
-            <span className="w-5 text-center">👥</span> Data Pengguna
-          </Link>
-          
-          <Link href="/admin/trips" className={getLinkClass('/admin/trips')}>
-            <span className="w-5 text-center">⛺</span> Moderasi Trip
-          </Link>
-
-          {/* GROUP 4: SYSTEM (Placeholder) */}
-          <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 mt-6">System</p>
-          
-          <Link href="/admin/settings" className={getLinkClass('/admin/settings')}>
-            <span className="w-5 text-center">⚙</span> Pengaturan
-          </Link>
-
         </nav>
 
         {/* Footer Sidebar */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link"; // <--- JANGAN LUPA IMPORT INI
+import Link from "next/link"; 
 import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
@@ -21,6 +21,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
+        // Pastikan endpoint API ini benar sesuai route Laravel Anda
         const res = await fetch("http://127.0.0.1:8000/api/admin/stats", {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -32,7 +33,6 @@ export default function AdminDashboard() {
         const json = await res.json();
         setStats(json.data);
       } catch (error) {
-        // Silent error agar tidak mengganggu UI jika gagal fetch
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -48,16 +48,28 @@ export default function AdminDashboard() {
         {/* 1. WELCOME BANNER */}
         <div className="bg-linear-to-r from-green-800 to-green-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg">
             <div className="relative z-10 max-w-2xl">
-                <h2 className="tsext-3xl font-bold mb-2">Halo, Admin! 👋</h2>
+                {/* Perbaikan Typo: tsext-3xl -> text-3xl */}
+                <h2 className="text-3xl font-bold mb-2">Halo, Admin! 👋</h2>
                 <p className="text-green-100 text-sm leading-relaxed mb-6">
-                    Selamat datang di panel kontrol MuncakGunung. Saat ini terdapat <b>{stats.trips} trip aktif</b> dan komunitas terus bertumbuh. Apa yang ingin Anda kerjakan hari ini?
+                    Selamat datang di panel kontrol MuncakGunung. Saat ini terdapat <b>{stats.mountains} data gunung,</b> dan komunitas terus bertumbuh. Apa yang ingin Anda kerjakan hari ini?
                 </p>
-                <div className="flex gap-3">
+                
+                {/* Container Tombol: Ditambah flex-wrap agar aman di mobile */}
+                <div className="flex flex-wrap gap-3">
                     <Link href="/admin/news" className="bg-white text-green-800 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-green-50 transition shadow-lg inline-flex items-center gap-2">
-                        <span>✍</span> Tulis Artikel Baru
+                        <span>✍</span> Tulis Artikel
                     </Link>
                     <Link href="/admin/mountains" className="bg-green-700 text-white border border-green-500 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-green-600 transition shadow-lg inline-flex items-center gap-2">
-                        <span>🏔</span> Tambah Data Gunung
+                        <span>🏔</span> Tambah Gunung
+                    </Link>
+                    
+                    {/* --- TOMBOL BARU: LIHAT WEBSITE --- */}
+                    <Link 
+                        href="/" 
+                        target="_blank" 
+                        className="bg-green-900/30 text-white border border-green-400/30 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-green-900/50 transition shadow-lg inline-flex items-center gap-2"
+                    >
+                        <span>🌐</span> Lihat Website
                     </Link>
                 </div>
             </div>
