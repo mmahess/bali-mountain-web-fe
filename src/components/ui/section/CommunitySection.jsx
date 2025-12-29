@@ -23,14 +23,6 @@ export default function CommunitySection({ trips, gallery }) {
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Aktivitas Komunitas ⛺</h2>
             <p className="text-gray-500 text-sm mt-1">Lihat siapa yang sedang mencari tim.</p>
           </div>
-          <div className="bg-white p-1 rounded-xl flex text-xs font-bold shadow-sm border border-gray-100">
-            <Link href="/komunitas">
-                <button className="bg-primary text-white shadow-md px-4 py-2 rounded-lg">Cari Barengan</button>
-            </Link>
-            <Link href="/komunitas">
-                <button className="text-gray-500 px-4 py-2 hover:text-gray-700">Feed Foto</button>
-            </Link>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

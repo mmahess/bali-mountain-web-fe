@@ -1,5 +1,5 @@
 import Link from "next/link";
-import MountainCard from "@/components/ui/card/MountainCard"; // Import Kartu Baru
+import MountainCard from "@/components/ui/card/MountainCard"; 
 
 export default function PopularTrails({ mountains }) {
   return (
@@ -7,20 +7,27 @@ export default function PopularTrails({ mountains }) {
       
       {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Jalur Populer ⭐</h2>
+        <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Jalur Populer 🔥</h2>
+            <p className="text-gray-500 text-sm mt-1 hidden md:block">Pilihan favorit pendaki berdasarkan rating.</p>
+        </div>
         <Link href="/gunung" className="text-primary text-sm font-bold hover:underline">Lihat Semua</Link>
       </div>
       
-      {/* Grid Gunung */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      {/* Grid Gunung - UPDATE DISINI */}
+      {/* grid-cols-2 (HP), md:grid-cols-3 (Tablet), lg:grid-cols-5 (Laptop/PC) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {mountains && mountains.length > 0 ? (
           mountains.map((mountain) => (
-            // SEKARANG KITA PAKAI KOMPONEN KARTU YANG SAMA DENGAN KATALOG
-            <MountainCard key={mountain.id} mountain={mountain} />
+            // Bungkus dengan div agar height-nya seragam
+            <div key={mountain.id} className="h-full">
+                <MountainCard mountain={mountain} />
+            </div>
           ))
         ) : (
-          <div className="col-span-4 py-12 text-center bg-gray-50 rounded-3xl border-dashed border-2 border-gray-200">
-            <p className="text-gray-400 font-medium">Data gunung tidak muncul.</p>
+          // Empty State (col-span-full agar melebar penuh)
+          <div className="col-span-full py-12 text-center bg-gray-50 rounded-3xl border-dashed border-2 border-gray-200">
+            <p className="text-gray-400 font-medium">Belum ada data jalur gunung.</p>
           </div>
         )}
       </div>

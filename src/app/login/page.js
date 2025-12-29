@@ -43,7 +43,7 @@ export default function LoginPage() {
       toast.success(`Selamat datang, ${data.data.name}!`, { id: toastId });
 
       if (data.role === "admin") {
-        router.push("/"); 
+        router.push("/admin/dashboard"); 
       } else {
         router.push("/");
       }

@@ -1,5 +1,7 @@
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import MapViewer from "@/components/ui/section/MapViewer";
+// 1. IMPORT COMPONENT REVIEW BARU
+import MountainReviews from "@/components/ui/section/detail/MountainReviews"; 
 import Link from "next/link";
 
 // --- FUNGSI FETCH DATA ---
@@ -32,7 +34,6 @@ export default async function MountainDetailPage({ params }) {
     );
   }
 
-  // LOGIC AMAN: Memastikan nilai '0' atau '1' dari database dibaca dengan benar sebagai boolean
   const isWajibGuide = mountain.is_guide_required == 1 || mountain.is_guide_required === true;
 
   return (
@@ -103,6 +104,8 @@ export default async function MountainDetailPage({ params }) {
                 
                 {/* LEFT CONTENT */}
                 <div className="lg:col-span-2 space-y-8">
+                    
+                    {/* Deskripsi */}
                     <section className="bg-white p-6 md:p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">Tentang {mountain.name}</h2>
                         <div className="prose prose-green max-w-none text-gray-600 leading-relaxed text-sm md:text-base whitespace-pre-line">
@@ -110,6 +113,7 @@ export default async function MountainDetailPage({ params }) {
                         </div>
                     </section>
 
+                    {/* Galeri */}
                     <section>
                         <h2 className="text-xl font-bold text-gray-900 mb-4">Galeri Foto</h2>
                         {mountain.images && mountain.images.length > 0 ? (
@@ -131,51 +135,17 @@ export default async function MountainDetailPage({ params }) {
                         )}
                     </section>
 
-                    <section className="bg-white p-6 md:p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-gray-900">
-                                Ulasan Pendaki ({mountain.reviews ? mountain.reviews.length : 0})
-                            </h2>
-                            <button className="text-primary font-bold text-sm hover:underline">Tulis Ulasan</button>
-                        </div>
+                    {/* 2. GANTI BAGIAN ULASAN LAMA DENGAN COMPONENT BARU */}
+                    <MountainReviews 
+                        mountainId={mountain.id} 
+                        initialReviews={mountain.reviews} 
+                    />
 
-                        {mountain.reviews && mountain.reviews.length > 0 ? (
-                            <div className="space-y-6">
-                                {mountain.reviews.map((review) => (
-                                    <div key={review.id} className="flex gap-4 border-b border-gray-50 pb-6 last:border-0 last:pb-0">
-                                        <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0 overflow-hidden">
-                                            <img 
-                                                src={review.user?.avatar || `https://ui-avatars.com/api/?name=${review.user?.name || 'User'}`} 
-                                                alt={review.user?.name} 
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-sm text-gray-900">{review.user?.name || 'Pendaki'}</h4>
-                                            <div className="text-yellow-400 text-xs mb-1">
-                                                {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                                            </div>
-                                            <p className="text-sm text-gray-600 leading-relaxed">
-                                                "{review.comment}"
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8">
-                                <div className="text-4xl mb-2">💬</div>
-                                <p className="text-gray-500 text-sm font-medium">Belum ada ulasan. Jadilah yang pertama!</p>
-                            </div>
-                        )}
-                    </section>
                 </div>
 
                 {/* RIGHT SIDEBAR */}
                 <aside className="space-y-6 sticky top-24 h-fit">
                     
-                    {/* INFO PENTING */}
-                    {/* Menggunakan variabel isWajibGuide yang sudah kita amankan logikanya */}
                     <div className={`bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 ${isWajibGuide ? 'border-red-500' : 'border-green-500'}`}>
                         <h3 className="font-bold text-gray-900 mb-4 text-sm flex items-center gap-2 uppercase tracking-wide">
                             <span>ℹ️</span> Informasi Penting
@@ -203,7 +173,6 @@ export default async function MountainDetailPage({ params }) {
                         </div>
                     </div>
 
-                    {/* CARD MAP VIEWER */}
                     <MapViewer mapUrl={mountain.map_iframe_url} />
 
                 </aside>
