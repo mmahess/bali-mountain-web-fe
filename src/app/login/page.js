@@ -61,17 +61,15 @@ export default function LoginPage() {
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border border-gray-100">
         
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-4">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-25 h-25 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
-            <img 
-              src="/logo.png" 
-              alt="Logo Pendakian Bali" 
-              className="w-full h-full object-contain p-1" 
-            />
-          </div>
-        </Link>
-          </Link>
+            <Link href="/" className="inline-block mb-4">
+              <div className="w-25 h-25 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
+                <img 
+                  src="/logo.png" 
+                  alt="Logo Pendakian Bali" 
+                  className="w-full h-full object-contain p-1" 
+                />
+              </div>
+            </Link>
           <h1 className="text-2xl font-bold text-gray-900">Selamat Datang Kembali!</h1>
           <p className="text-gray-500 text-sm mt-2">Masuk untuk mulai petualanganmu.</p>
         </div>

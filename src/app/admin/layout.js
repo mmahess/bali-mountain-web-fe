@@ -60,7 +60,7 @@ export default function AdminLayout({ children }) {
               />
             </div>
           <div>
-            <h1 className="font-bold text-gray-800 tracking-tight leading-none text-lg">Mountain<span className="text-primary">CMS</span></h1>
+            <h1 className="font-bold text-gray-800 tracking-tight leading-none text-lg">SobatMuncak<span className="text-primary">CMS</span></h1>
             <p className="text-[10px] text-gray-400 mt-1">v1.0.0 Panel Admin</p>
           </div>
         </div>
