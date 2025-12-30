@@ -116,7 +116,7 @@ export default function AdminLayout({ children }) {
             <div className="flex items-center gap-4">
                 <div className="text-right hidden sm:block">
                     <p className="text-sm font-bold text-gray-800">{adminName}</p>
-                    <p className="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full inline-block">Super Admin</p>
+                    <p className="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full inline-block">Admin SobatMuncak</p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md border-2 border-green-100">
                     {adminName.charAt(0)}

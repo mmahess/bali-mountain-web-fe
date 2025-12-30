@@ -85,7 +85,7 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">Nama Lengkap</label>
-            <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Contoh: Budi Santoso" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary focus:bg-white transition" />
+            <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Contoh: Budi Setiawan" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary focus:bg-white transition" />
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">Email Address</label>
