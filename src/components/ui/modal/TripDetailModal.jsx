@@ -27,7 +27,7 @@ export default function TripDetailModal({ isOpen, onClose, trip, currentUser, on
     const toastId = toast.loading("Bergabung...");
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${trip.id}/join`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${trip.id}/join`, {
             method: "POST", headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -46,7 +46,7 @@ export default function TripDetailModal({ isOpen, onClose, trip, currentUser, on
     const toastId = toast.loading("Keluar trip...");
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${trip.id}/leave`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${trip.id}/leave`, {
             method: "POST", headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();

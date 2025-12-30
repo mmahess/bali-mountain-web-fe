@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link"; 
 import toast from "react-hot-toast";
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminDashboard() {
   // State Statistik
   const [stats, setStats] = useState({
@@ -22,7 +24,7 @@ export default function AdminDashboard() {
       try {
         const token = localStorage.getItem("token");
         // Pastikan endpoint API ini benar sesuai route Laravel Anda
-        const res = await fetch("http://127.0.0.1:8000/api/admin/stats", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/stats`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Accept": "application/json"

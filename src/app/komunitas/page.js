@@ -1,10 +1,12 @@
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import CommunityPage from "@/components/pages/community/CommunityPage";
 
+export const dynamic = 'force-dynamic';
+
 // 1. Fetch Gallery (Server Side)
 async function getGalleries() {
   try {
-    const res = await fetch('http://localhost:8000/api/galleries', { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galleries`, { cache: 'no-store' });
     if (!res.ok) {
         console.error("Gallery Fetch Error:", res.status);
         return []; // Return array kosong jika gagal, biar gak crash
@@ -20,7 +22,7 @@ async function getGalleries() {
 // 2. Fetch Trips / Feed (Server Side)
 async function getTrips() {
   try {
-    const res = await fetch('http://localhost:8000/api/trips', { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/trips`, { cache: 'no-store' });
     if (!res.ok) {
         console.error("Trips Fetch Error:", res.status); // Cek console terminal VS Code kamu untuk lihat kode errornya (404/500)
         return []; 

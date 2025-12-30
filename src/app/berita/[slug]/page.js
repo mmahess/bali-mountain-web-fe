@@ -2,10 +2,12 @@ import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import NewsDetailPage from "@/components/pages/news/NewsDetailPage"; // Import Tetap Sesuai Aslinya
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 // 1. Fetch Detail Berita
 async function getNewsDetail(slug) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/news/${slug}`, { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${slug}`, { 
       cache: 'no-store' 
     });
     if (!res.ok) return null;
@@ -19,7 +21,7 @@ async function getNewsDetail(slug) {
 // 2. Fetch List Berita (Untuk Sidebar "Baca Juga")
 async function getNewsList() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/news', { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news`, { 
       cache: 'no-store' 
     });
     if (!res.ok) return [];
@@ -58,13 +60,13 @@ export default async function Page({ params }) {
   const fixImageUrl = (path) => {
     if (!path) return "https://placehold.co/1200x600?text=No+Image";
     if (path.startsWith("http")) return path;
-    return `http://127.0.0.1:8000/storage/${path}`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`;
   };
 
   const fixAvatarUrl = (user) => {
     if (!user) return "";
     if (user.avatar && !user.avatar.startsWith("http")) {
-        return `http://127.0.0.1:8000/storage/${user.avatar}`;
+        return `${process.env.NEXT_PUBLIC_API_URL}/storage/${user.avatar}`;
     }
     return user.avatar || `https://ui-avatars.com/api/?name=${user.name}`;
   };

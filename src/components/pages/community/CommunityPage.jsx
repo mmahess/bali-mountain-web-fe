@@ -47,7 +47,7 @@ export default function CommunityPage({ data }) {
   }, []);
 
   const loadMyTrips = (token) => {
-    fetch("http://localhost:8000/api/my-trips", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/my-trips`, {
         headers: { "Authorization": `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -56,7 +56,7 @@ export default function CommunityPage({ data }) {
   };
 
   const loadJoinedTrips = (token) => {
-    fetch("http://localhost:8000/api/joined-trips", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/joined-trips`, {
         headers: { "Authorization": `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -65,7 +65,7 @@ export default function CommunityPage({ data }) {
   };
 
   const loadGallery = () => {
-    fetch("http://localhost:8000/api/galleries")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galleries`)
     .then(res => res.json())
     .then(json => { if(json.data) setGallery(json.data); })
     .catch(err => console.error("Gagal load gallery", err));

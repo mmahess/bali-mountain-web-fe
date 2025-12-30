@@ -1,9 +1,11 @@
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import NewsPage from "@/components/pages/news/NewsPage";
 
+export const dynamic = 'force-dynamic';
+
 async function getNewsData() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/news', { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news`, { 
       cache: 'no-store' 
     });
 
@@ -15,7 +17,7 @@ async function getNewsData() {
     const fixUrl = (path) => {
       if (!path) return "https://placehold.co/1200x600?text=No+Image";
       // Jika sudah ada http, gunakan langsung, jika tidak tambahkan domain backend
-      return path.startsWith('http') ? path : `http://127.0.0.1:8000/storage/${path}`;
+      return path.startsWith('http') ? path : `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`;
     };
 
     // 1. Perbaiki URL gambar untuk Hot News

@@ -25,13 +25,13 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/1200x600?text=No+Image";
     if (path.startsWith("http")) return path;
-    return `http://127.0.0.1:8000/storage/${path}`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`;
   };
 
   const getAvatarUrl = (user) => {
     if (!user) return "https://ui-avatars.com/api/?name=User";
     if (user.avatar && !user.avatar.startsWith("http")) {
-        return `http://127.0.0.1:8000/storage/${user.avatar}`;
+        return `${process.env.NEXT_PUBLIC_API_URL}/storage/${user.avatar}`;
     }
     return user.avatar || `https://ui-avatars.com/api/?name=${user.name}`;
   };
@@ -44,7 +44,7 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
 
     setIsSubmitting(true);
     try {
-        const res = await axios.post(`http://127.0.0.1:8000/api/news/${newsDetail.id}/comments`, 
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${newsDetail.id}/comments`, 
             { body: input },
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -66,7 +66,7 @@ export default function NewsDetailPage({ newsDetail, newsList }) {
     const token = localStorage.getItem("token");
     
     try {
-        await axios.delete(`http://127.0.0.1:8000/api/news/comments/${id}`, {
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/news/comments/${id}`, {
             headers: { Authorization: `Bearer ${token}` } 
         });
         setComments(comments.filter(c => c.id !== id));

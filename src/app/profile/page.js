@@ -5,6 +5,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +49,7 @@ export default function ProfilePage() {
       }
 
       // Pastikan URL API sesuai dengan Laravel kamu
-      const res = await axios.post("http://127.0.0.1:8000/api/profile/update", formData, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/profile/update`, formData, {
         headers: { 
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data" 
@@ -84,7 +86,7 @@ export default function ProfilePage() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://127.0.0.1:8000/api/profile/password", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/profile/password`, {
         current_password: passwords.current,
         new_password: passwords.new,
         new_password_confirmation: passwords.confirm

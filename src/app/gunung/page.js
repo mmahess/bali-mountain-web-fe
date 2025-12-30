@@ -1,10 +1,12 @@
 import FrontpageLayout from "@/components/layouts/FrontpageLayout";
 import CatalogPage from "@/components/pages/catalog/CatalogPage";
 
+export const dynamic = 'force-dynamic';
+
 // Fetch Data Gunung
 async function getMountains() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/mountains', { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mountains`, { 
       cache: 'no-store' 
     });
 

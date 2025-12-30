@@ -48,7 +48,7 @@ export default function UploadGalleryModal({ isOpen, onClose, onSuccess }) {
 
       // Kirim menggunakan AXIOS
       // Axios otomatis mengatur header 'Content-Type': 'multipart/form-data'
-      await axios.post("http://localhost:8000/api/galleries", formData, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/galleries`, formData, {
         headers: { 
             "Authorization": `Bearer ${token}` 
         }

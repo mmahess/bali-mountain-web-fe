@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 // Pastikan path import ini sesuai dengan lokasi file GalleryGrid Anda
-import GalleryGrid from "./GalleryGrid"; 
-// Jika GalleryGrid ada di folder components, mungkin: "../../components/GalleryGrid"
+import GalleryGrid from "@/components/ui/section/community/GalleryGrid"; 
+
+export const dynamic = 'force-dynamic';
 
 export default function GalleryPage() {
   const [galleryData, setGalleryData] = useState([]);
@@ -11,8 +12,8 @@ export default function GalleryPage() {
   const [error, setError] = useState(null);
 
   // --- KONFIGURASI URL ---
-  // Gunakan http://127.0.0.1:8000 jika localhost bermasalah (failed to fetch)
-  const API_URL = "http://localhost:8000/api/galleries";
+  // Gunakan ${process.env.NEXT_PUBLIC_API_URL}:8000 jika localhost bermasalah (failed to fetch)
+  const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/galleries`;
 
   // --- FUNGSI FETCH DATA ---
   // Kita buat function ini di luar useEffect agar bisa dikirim ke anak (GalleryGrid)

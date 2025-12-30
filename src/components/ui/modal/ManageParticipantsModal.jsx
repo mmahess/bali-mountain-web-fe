@@ -11,7 +11,7 @@ export default function ManageParticipantsModal({ isOpen, onClose, tripId }) {
   const fetchParticipants = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
-    fetch(`http://127.0.0.1:8000/api/open-trips/${tripId}/participants`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${tripId}/participants`, {
       headers: { "Authorization": `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -35,7 +35,7 @@ export default function ManageParticipantsModal({ isOpen, onClose, tripId }) {
     const toastId = toast.loading("Menghapus peserta...");
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${tripId}/participants/${userId}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${tripId}/participants/${userId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${token}` }
         });

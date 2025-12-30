@@ -44,7 +44,7 @@ export default function AdminNewsPage() {
   const fetchNews = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/news", { cache: 'no-store' });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news`, { cache: 'no-store' });
       const json = await res.json();
       
       const hot = json.data.hotNews ? [json.data.hotNews] : [];
@@ -98,7 +98,7 @@ export default function AdminNewsPage() {
             is_important: data.is_important ? true : false
         });
         // Tampilkan thumbnail lama
-        const imgUrl = data.thumbnail ? `http://127.0.0.1:8000/storage/${data.thumbnail}` : null;
+        const imgUrl = data.thumbnail ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${data.thumbnail}` : null;
         setImagePreview(imgUrl);
         setImageFile(null);
       } else {
@@ -141,8 +141,8 @@ export default function AdminNewsPage() {
       }
 
       const url = isEditing 
-        ? `http://127.0.0.1:8000/api/news/${editId}`
-        : "http://127.0.0.1:8000/api/news";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/news/${editId}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/news`;
       
       const res = await fetch(url, {
         method: "POST", // Selalu POST jika FormData
@@ -172,7 +172,7 @@ export default function AdminNewsPage() {
     const toastId = toast.loading("Menghapus...");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://127.0.0.1:8000/api/news/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${id}`, {
         method: "DELETE",
         headers: { 
             "Authorization": `Bearer ${token}`,
@@ -221,7 +221,7 @@ export default function AdminNewsPage() {
                                 <tr key={item.id} className="hover:bg-gray-50 transition">
                                     <td className="p-4">
                                         <img 
-                                            src={item.thumbnail ? `http://127.0.0.1:8000/storage/${item.thumbnail}` : "https://placehold.co/100"} 
+                                            src={item.thumbnail ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${item.thumbnail}` : "https://placehold.co/100"} 
                                             className="w-12 h-12 rounded object-cover bg-gray-200"
                                         />
                                     </td>

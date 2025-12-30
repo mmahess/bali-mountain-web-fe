@@ -4,7 +4,7 @@ import Link from "next/link";
 async function getNews() {
   try {
     // PENTING: cache: 'no-store' agar selalu ambil data terbaru (realtime)
-    const res = await fetch("http://127.0.0.1:8000/api/news", { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news`, { 
         cache: 'no-store' 
     });
     
@@ -20,7 +20,7 @@ async function getNews() {
 const getImageUrl = (path) => {
   if (!path) return "https://placehold.co/600x400?text=No+Image";
   if (path.startsWith("http")) return path;
-  return `http://127.0.0.1:8000/storage/${path}`;
+  return `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`;
 };
 
 export default async function HomeNewsSection() {

@@ -13,7 +13,7 @@ export default function GalleryGrid({ gallery, refreshData }) {
   const [token, setToken] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
 
-  const BACKEND_URL = "http://localhost:8000"; 
+  const BACKEND_URL = `${process.env.NEXT_PUBLIC_API_URL}`; 
 
   // --- 2. EFFECT HOOKS ---
   useEffect(() => {

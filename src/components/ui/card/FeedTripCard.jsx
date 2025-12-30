@@ -34,7 +34,7 @@ export default function FeedTripCard({ trip, currentUser, onDetail }) {
     try {
       const token = localStorage.getItem("token");
       // Perbaikan: Menggunakan axios
-      await axios.post(`http://127.0.0.1:8000/api/open-trips/${trip.id}/join`, {}, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${trip.id}/join`, {}, {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -59,7 +59,7 @@ export default function FeedTripCard({ trip, currentUser, onDetail }) {
 
     try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://127.0.0.1:8000/api/open-trips/${trip.id}`, {
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${trip.id}`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
 

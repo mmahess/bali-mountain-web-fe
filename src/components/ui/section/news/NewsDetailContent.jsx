@@ -9,7 +9,7 @@ export default function NewsDetailContent({ news }) {
     // Jika path sudah berupa URL lengkap (misal dari internet), biarkan
     if (path.startsWith("http")) return path;
     // Jika path dari upload lokal, tambahkan prefix storage backend
-    return `http://127.0.0.1:8000/storage/${path}`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`;
   };
 
   // Format Tanggal

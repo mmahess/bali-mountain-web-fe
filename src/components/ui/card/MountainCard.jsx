@@ -26,7 +26,7 @@ export default function MountainCard({ mountain }) {
           <img 
             // Pastikan URL gambar lengkap
             src={mountain.cover_image && !mountain.cover_image.startsWith('http') 
-                ? `http://localhost:8000/storage/${mountain.cover_image}` 
+                ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${mountain.cover_image}` 
                 : (mountain.cover_image || "https://placehold.co/600x400")} 
             alt={mountain.name} 
             className="w-full h-full object-cover group-hover:scale-110 transition duration-500"

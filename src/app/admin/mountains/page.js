@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminMountainsPage() {
   const [view, setView] = useState("list"); // 'list' | 'form'
   const [mountains, setMountains] = useState([]);
@@ -36,7 +38,7 @@ export default function AdminMountainsPage() {
   const fetchMountains = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/mountains", { cache: 'no-store' });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mountains`, { cache: 'no-store' });
       const json = await res.json();
       setMountains(json.data);
     } catch (error) {
@@ -91,7 +93,7 @@ export default function AdminMountainsPage() {
             map_iframe_url: data.map_iframe_url || ""
         });
         // Tampilkan gambar lama dari server
-        const imgUrl = data.cover_image ? `http://127.0.0.1:8000/storage/${data.cover_image}` : null;
+        const imgUrl = data.cover_image ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${data.cover_image}` : null;
         setImagePreview(imgUrl);
         setImageFile(null);
       } else {
@@ -146,8 +148,8 @@ export default function AdminMountainsPage() {
 
       // Tentukan URL. Gunakan POST untuk kedua kasus (karena trik _method PUT)
       const url = isEditing 
-        ? `http://127.0.0.1:8000/api/mountains/${editId}`
-        : "http://127.0.0.1:8000/api/mountains";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/mountains/${editId}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/mountains`;
 
       const res = await fetch(url, {
         method: "POST", // Selalu POST jika FormData
@@ -179,7 +181,7 @@ export default function AdminMountainsPage() {
     const toastId = toast.loading("Menghapus...");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://127.0.0.1:8000/api/mountains/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mountains/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -219,7 +221,7 @@ export default function AdminMountainsPage() {
                                 <tr key={item.id} className="hover:bg-gray-50">
                                     <td className="p-4">
                                         <img 
-                                            src={item.cover_image ? `http://127.0.0.1:8000/storage/${item.cover_image}` : "https://placehold.co/100"} 
+                                            src={item.cover_image ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${item.cover_image}` : "https://placehold.co/100"} 
                                             className="w-10 h-10 rounded object-cover bg-gray-200"
                                         />
                                     </td>

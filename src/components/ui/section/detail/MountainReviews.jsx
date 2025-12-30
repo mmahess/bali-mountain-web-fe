@@ -25,7 +25,7 @@ export default function MountainReviews({ mountainId, initialReviews }) {
 
     try {
       const res = await axios.post(
-        `http://localhost:8000/api/hiking-trails/${mountainId}/reviews`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/hiking-trails/${mountainId}/reviews`,
         { rating, comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );

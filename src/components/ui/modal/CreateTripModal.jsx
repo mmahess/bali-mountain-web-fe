@@ -16,7 +16,7 @@ export default function CreateTripModal({ isOpen, onClose, onSuccess, tripToEdit
   // Load Mountains
   useEffect(() => {
     if (isOpen && mountains.length === 0) {
-      fetch("http://127.0.0.1:8000/api/mountains")
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mountains`)
         .then((res) => res.json())
         .then((json) => setMountains(json.data || []));
     }
@@ -55,8 +55,8 @@ export default function CreateTripModal({ isOpen, onClose, onSuccess, tripToEdit
       
       // Tentukan URL & Method (POST vs PUT)
       const url = tripToEdit 
-        ? `http://127.0.0.1:8000/api/open-trips/${tripToEdit.id}`
-        : "http://127.0.0.1:8000/api/open-trips";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${tripToEdit.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/open-trips`;
       
       const method = tripToEdit ? "PUT" : "POST";
 

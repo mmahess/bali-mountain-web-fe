@@ -11,7 +11,7 @@ export default function CommunitySection({ trips, gallery }) {
 
   // Helper URL Gambar (Backend Laravel)
   const getImageUrl = (filename) => {
-    return filename ? `http://localhost:8000/storage/images/${filename}` : "https://via.placeholder.com/150";
+    return filename ? `${process.env.NEXT_PUBLIC_API_URL}/storage/images/${filename}` : "https://via.placeholder.com/150";
   };
 
   return (

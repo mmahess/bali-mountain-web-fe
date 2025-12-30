@@ -4,6 +4,8 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+export const dynamic = 'force-dynamic';
+
 export default function TripDetailPage({ params }) {
   // Unwrapping params (Next.js 15 requirement)
   const { id } = use(params);
@@ -25,7 +27,7 @@ export default function TripDetailPage({ params }) {
         // Kita gunakan endpoint public/detail jika ada, atau endpoint participants (karena isinya lengkap)
         // Atau buat endpoint show public di backend.
         // Untuk amannya kita pakai endpoint participants yang sudah kita buat sebelumnya karena return data trip lengkap
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${id}/participants`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${id}/participants`, {
              headers: token ? { "Authorization": `Bearer ${token}` } : {}
         });
         
@@ -63,7 +65,7 @@ export default function TripDetailPage({ params }) {
     const toastId = toast.loading("Bergabung...");
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${id}/join`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${id}/join`, {
             method: "POST", headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -81,7 +83,7 @@ export default function TripDetailPage({ params }) {
     const toastId = toast.loading("Keluar trip...");
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://127.0.0.1:8000/api/open-trips/${id}/leave`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-trips/${id}/leave`, {
             method: "POST", headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();

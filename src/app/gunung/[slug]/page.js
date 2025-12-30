@@ -3,10 +3,12 @@ import MapViewer from "@/components/ui/section/MapViewer";
 import MountainReviews from "@/components/ui/section/detail/MountainReviews"; 
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 // --- FUNGSI FETCH DATA ---
 async function getMountainDetail(slug) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/mountains/${slug}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mountains/${slug}`, {
       cache: 'no-store'
     });
     if (!res.ok) return null;
@@ -39,7 +41,7 @@ export default async function MountainDetailPage({ params }) {
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/1200x600"; // Placeholder jika kosong
     if (path.startsWith("http")) return path; // Jika sudah URL lengkap (misal dari unsplash)
-    return `http://127.0.0.1:8000/storage/${path}`; // Tambahkan prefix backend
+    return `${process.env.NEXT_PUBLIC_API_URL}/storage/${path}`; // Tambahkan prefix backend
   };
 
   return (
