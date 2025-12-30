@@ -9,7 +9,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "MuncakGunung - Teman Pendakianmu",
+  title: "SobatMuncak - Teman Pendakianmu",
   description: "Platform komunitas pendaki gunung Indonesia",
 };
 

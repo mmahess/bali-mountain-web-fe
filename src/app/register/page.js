@@ -70,8 +70,12 @@ export default function RegisterPage() {
         
         <div className="text-center mb-6">
           <Link href="/" className="inline-block mb-4">
-            <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center text-xl font-bold shadow-lg shadow-green-100 mx-auto">
-              MG
+            <div className="w-25 h-25 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
+              <img 
+                src="/logo.png" 
+                alt="Logo Pendakian Bali" 
+                className="w-full h-full object-contain p-1" 
+              />
             </div>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Gabung Komunitas</h1>

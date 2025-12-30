@@ -51,7 +51,7 @@ export default function AdminDashboard() {
                 {/* Perbaikan Typo: tsext-3xl -> text-3xl */}
                 <h2 className="text-3xl font-bold mb-2">Halo, Admin! 👋</h2>
                 <p className="text-green-100 text-sm leading-relaxed mb-6">
-                    Selamat datang di panel kontrol MuncakGunung. Saat ini terdapat <b>{stats.mountains} data gunung,</b> dan komunitas terus bertumbuh. Apa yang ingin Anda kerjakan hari ini?
+                    Selamat datang di panel kontrol SobatMuncak. Saat ini terdapat <b>{stats.mountains} data gunung,</b> dan komunitas terus bertumbuh. Apa yang ingin Anda kerjakan hari ini?
                 </p>
                 
                 {/* Container Tombol: Ditambah flex-wrap agar aman di mobile */}

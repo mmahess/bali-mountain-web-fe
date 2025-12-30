@@ -7,8 +7,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">MG</div>
-              <span className="text-xl font-bold text-gray-800">MuncakGunung</span>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
+                <img 
+                  src="/logo.png" 
+                  alt="Logo Pendakian Bali" 
+                  className="w-full h-full object-contain p-1" 
+                />
+              </div>
+              <span className="text-xl font-bold text-gray-800">SobatMuncak</span>
             </div>
             <p className="text-gray-500 text-xs leading-relaxed">
               Platform nomor satu untuk mencari teman pendakian dan informasi gunung di Bali. Jelajahi alam dengan aman dan seru.
@@ -38,16 +44,16 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-gray-900 mb-6 text-sm">Hubungi Kami</h4>
             <ul className="space-y-3 text-xs text-gray-500 font-medium">
-              <li>📧 support@muncakgunung.com</li>
-              <li>📞 +62 812 3456 7890</li>
-              <li>📍 Denpasar, Bali, Indonesia</li>
+              <li>📧 support@sobatmuncak.com</li>
+              <li>📞 +62 877 3033 9622</li>
+              <li>📍 Singaraja, Bali, Indonesia</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-100 pt-8 text-center">
           <p className="text-gray-400 text-[10px]">
-            &copy; {new Date().getFullYear()} MuncakGunung Project. Hak Cipta Dilindungi.
+            &copy; {new Date().getFullYear()} SobatMuncak Project. Hak Cipta Dilindungi.
           </p>
         </div>
       </div>

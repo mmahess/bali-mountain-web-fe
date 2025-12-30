@@ -55,12 +55,20 @@ export default function Navbar() {
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        
-        <Link href="/" className="flex items-center gap-2 cursor-pointer">
-          <div className="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-lg shadow-green-100">
-            MG
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
+            <img 
+              src="/logo.png" 
+              alt="Logo Pendakian Bali" 
+              className="w-full h-full object-contain p-1" 
+            />
           </div>
-          <span className="text-xl font-bold text-gray-800 tracking-tight">MuncakGunung</span>
+          
+          <div className="flex flex-col">
+            <span className="text-lg font-black text-gray-800 leading-none group-hover:text-primary transition-colors">
+              SobatMuncak
+            </span>
+          </div>
         </Link>
 
         <div className="hidden md:flex gap-8 font-medium text-sm text-gray-500">

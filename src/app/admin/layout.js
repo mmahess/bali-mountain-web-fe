@@ -52,7 +52,13 @@ export default function AdminLayout({ children }) {
         
         {/* Header Sidebar */}
         <div className="p-6 border-b border-gray-100 flex items-center gap-3">
-          <div className="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-green-200 shadow-lg">MG</div>
+            <div className="w-25 h-25 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
+              <img 
+                src="/logo.png" 
+                alt="Logo Pendakian Bali" 
+                className="w-full h-full object-contain p-1" 
+              />
+            </div>
           <div>
             <h1 className="font-bold text-gray-800 tracking-tight leading-none text-lg">Mountain<span className="text-primary">CMS</span></h1>
             <p className="text-[10px] text-gray-400 mt-1">v1.0.0 Panel Admin</p>
