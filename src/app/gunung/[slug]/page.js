@@ -178,7 +178,7 @@ export default async function MountainDetailPage({ params }) {
                             </li>
                         </ul>
                         <div className="mt-6 pt-4 border-t border-gray-100">
-                             <button className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-100 text-sm">
+                            <button className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-100 text-sm">
                                 Buat Open Trip Disini
                             </button>
                         </div>

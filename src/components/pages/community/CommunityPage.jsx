@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast"; // <--- 1. TAMBAHKAN IMPORT INI
+import toast from "react-hot-toast"; 
 import FeedTripCard from "@/components/ui/card/FeedTripCard";
 import MyTripCard from "@/components/ui/card/MyTripCard"; 
 import JoinedTripCard from "@/components/ui/card/JoinedTripCard"; 
@@ -71,22 +71,15 @@ export default function CommunityPage({ data }) {
     .catch(err => console.error("Gagal load gallery", err));
   };
 
-  // --- 2. HANDLERS DENGAN PENGECEKAN LOGIN ---
-  
+  // --- HANDLERS ---
   const handleCreateNew = () => {
-    // Cek Login
-    if (!user) {
-        return toast.error("Silakan buat akun dulu untuk membuat ajakan trip!");
-    }
+    if (!user) return toast.error("Harap Login terlebih dahulu");
     setTripToEdit(null);
     setIsCreateModalOpen(true);
   };
 
   const handleUploadClick = () => {
-    // Cek Login
-    if (!user) {
-        return toast.error("Silakan login dulu untuk upload foto!");
-    }
+    if (!user) return toast.error("Harap Login terlebih dahulu");
     setIsUploadModalOpen(true);
   };
 
@@ -120,16 +113,38 @@ export default function CommunityPage({ data }) {
     loadGallery(); 
   };
 
+  // --- KOMPONEN MENU ITEM (Biar rapi) ---
+  const MenuItem = ({ pageId, icon, label, onClick }) => {
+     const isActive = activePage === pageId;
+     return (
+        <button 
+            onClick={onClick} 
+            className={`
+                whitespace-nowrap flex items-center gap-2 px-4 py-3 rounded-xl transition text-sm font-medium
+                ${isActive 
+                    ? 'bg-green-50 text-primary font-bold border-b-4 md:border-b-0 md:border-l-4 border-primary' 
+                    : 'text-gray-500 hover:bg-gray-50'}
+            `}
+        >
+            <span>{icon}</span> {label}
+        </button>
+     );
+  };
+
   return (
     <div className="bg-bg-soft min-h-screen pb-20 font-sans text-gray-700">
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
         
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
 
-            {/* SIDEBAR KIRI */}
-            <aside className="hidden md:block w-full md:w-1/4 space-y-6 sticky top-24 shrink-0">
-                <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] text-center border border-gray-100">
+            {/* --- 1. SIDEBAR DESKTOP / TOP MENU MOBILE --- */}
+            {/* Di Mobile: Jadi Menu Horizontal Scrollable di atas */}
+            {/* Di Desktop: Jadi Sidebar Vertikal di kiri */}
+            <aside className="w-full md:w-1/4 space-y-4 md:space-y-6 md:sticky md:top-24 shrink-0">
+                
+                {/* Profile Card (Hanya muncul di Desktop, di Mobile sempit) */}
+                <div className="hidden md:block bg-white p-6 rounded-2xl shadow-sm text-center border border-gray-100">
                     <div className="w-20 h-20 mx-auto rounded-full bg-gray-200 overflow-hidden mb-4 border-4 border-gray-50">
                         <img 
                             src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=random`} 
@@ -137,10 +152,8 @@ export default function CommunityPage({ data }) {
                             alt="User"
                         />
                     </div>
-                    <h3 className="font-bold text-base text-gray-900">{user?.name || "Tamu"}</h3>
-                    <p className="text-xs text-gray-400 mb-4">{user?.email || "Yuk login dulu"}</p>
-                    
-                    {/* Tombol Edit Profil hanya aktif jika user login */}
+                    <h3 className="font-bold text-base text-gray-900 line-clamp-1">{user?.name || "Tamu"}</h3>
+                    <p className="text-xs text-gray-400 mb-4 line-clamp-1">{user?.email || "Yuk login dulu"}</p>
                     {user && (
                         <button className="text-xs font-bold text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition w-full">
                             Edit Profil
@@ -148,59 +161,69 @@ export default function CommunityPage({ data }) {
                     )}
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 space-y-1">
-                    <button onClick={() => setActivePage("feed")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'feed' ? 'bg-green-50 text-primary font-bold border-l-4 border-primary' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
-                        <span>🏔</span> Feed Komunitas
-                    </button>
-                    
-                    {/* Menu Ajakan Saya & Joined disembunyikan atau diberi alert jika belum login */}
-                    <button onClick={() => user ? setActivePage("mytrips") : toast.error("Login dulu untuk melihat ini")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'mytrips' ? 'bg-green-50 text-primary font-bold border-l-4 border-primary' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
-                        <span>🎫</span> Ajakan Saya
-                    </button>
-                    <button onClick={() => user ? setActivePage("joined") : toast.error("Login dulu untuk melihat ini")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-sm ${activePage === 'joined' ? 'bg-blue-50 text-blue-600 font-bold border-l-4 border-blue-500' : 'text-gray-500 hover:bg-gray-50 font-medium'}`}>
-                        <span>🎒</span> Trip Diikuti
-                    </button>
+                {/* MENU NAVIGASI UTAMA */}
+                <div className="bg-white p-2 md:p-4 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-x-auto scrollbar-hide md:overflow-visible">
+                    <div className="flex md:flex-col gap-1 md:gap-1 min-w-max md:min-w-0">
+                        <MenuItem 
+                            pageId="feed" 
+                            icon="🏔" 
+                            label="Feed Komunitas" 
+                            onClick={() => setActivePage("feed")} 
+                        />
+                        <MenuItem 
+                            pageId="mytrips" 
+                            icon="🎫" 
+                            label="Ajakan Saya" 
+                            onClick={() => user ? setActivePage("mytrips") : toast.error("Harap Login terlebih dahulu")} 
+                        />
+                        <MenuItem 
+                            pageId="joined" 
+                            icon="🎒" 
+                            label="Trip Diikuti" 
+                            onClick={() => user ? setActivePage("joined") : toast.error("Harap Login terlebih dahulu")} 
+                        />
+                    </div>
                 </div>
             </aside>
 
-            {/* KONTEN TENGAH */}
+
+            {/* --- 2. KONTEN TENGAH --- */}
             <div className="flex-1 w-full min-w-0 space-y-6">
 
                 {/* HALAMAN FEED */}
                 {activePage === "feed" && (
                     <>
-                        <div className="bg-white p-5 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
-                            <div className="flex gap-4">
-                                <div className="w-12 h-12 shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
+                        {/* Input Box: "Ada rencana muncak kemana?" */}
+                        <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="flex gap-3 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
                                      <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'G'}&background=random`} className="w-full h-full object-cover"/>
                                 </div>
                                 <div className="grow min-w-0">
-                                    <div className="w-full bg-gray-50 rounded-xl px-5 py-3 text-sm text-gray-500 mb-3 border border-transparent">
-                                        Halo {user?.name?.split(' ')[0] || 'Pendaki'}, ada rencana muncak kemana?
+                                    <div className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-500 mb-3 border border-transparent truncate">
+                                        Halo {user?.name?.split(' ')[0] || 'Pendaki'}, ada rencana muncak?
                                     </div>
-                                    <div className="flex flex-wrap justify-between items-center gap-2">
-                                        <div className="flex gap-2">
-                                            {/* 3. PANGGIL HANDLER BARU DI SINI */}
-                                            <button 
-                                                onClick={handleUploadClick}
-                                                className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition"
-                                            >
-                                                📷 Upload Foto
-                                            </button>
-                                            
-                                            <button 
-                                                onClick={handleCreateNew}
-                                                className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition"
-                                            >
-                                                📅 Buat Ajakan
-                                            </button>
-                                        </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        <button 
+                                            onClick={handleUploadClick}
+                                            className="flex-1 md:flex-none flex items-center justify-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition border border-gray-100"
+                                        >
+                                            📷 Upload Foto
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={handleCreateNew}
+                                            className="flex-1 md:flex-none flex items-center justify-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-2 rounded-lg hover:bg-green-50 hover:text-primary transition border border-gray-100"
+                                        >
+                                            📅 Buat Ajakan
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex text-sm font-medium overflow-hidden border border-gray-100 mb-6">
+                        {/* Tab Switcher: Cari Barengan vs Galeri */}
+                        <div className="bg-white rounded-xl shadow-sm flex text-sm font-medium overflow-hidden border border-gray-100 mb-6">
                             <button onClick={() => setActiveTab("feed")} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'feed' ? 'border-b-4 border-primary text-primary font-bold bg-green-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
                                 ⛺ Cari Barengan
                             </button>
@@ -209,10 +232,11 @@ export default function CommunityPage({ data }) {
                             </button>
                         </div>
 
+                        {/* Konten Tab */}
                         {activeTab === "feed" ? (
-                            <div className="space-y-5">
-                                <div className="flex justify-between items-center px-2">
-                                    <h3 className="font-bold text-gray-800">Ajakan Terbaru</h3>
+                            <div className="space-y-4 md:space-y-5">
+                                <div className="flex justify-between items-center px-1">
+                                    <h3 className="font-bold text-gray-800 text-lg">Ajakan Terbaru</h3>
                                 </div>
 
                                 {feed && feed.length > 0 ? (
@@ -225,14 +249,14 @@ export default function CommunityPage({ data }) {
                                         />
                                     ))
                                 ) : (
-                                    <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                                    <div className="text-center py-12 bg-white rounded-2xl border-2 border-dashed border-gray-200">
                                         <div className="text-4xl mb-3">⛺</div>
                                         <p className="text-gray-500 text-sm font-medium">Belum ada ajakan pendakian.</p>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
+                            <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100">
                                 <GalleryGrid 
                                     gallery={gallery} 
                                     refreshData={loadGallery}
@@ -244,24 +268,26 @@ export default function CommunityPage({ data }) {
 
                 {/* HALAMAN AJAKAN SAYA */}
                 {activePage === "mytrips" && (
-                    <div className="space-y-6 animate-in fade-in">
+                    <div className="space-y-4 md:space-y-6 animate-in fade-in">
                         <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-2xl font-bold text-gray-900">Manajemen Ajakan 🎫</h2>
-                            <button onClick={handleCreateNew} className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-green-700 shadow-md transition">
+                            <h2 className="text-xl md:text-2xl font-bold text-gray-900">Manajemen Ajakan 🎫</h2>
+                            <button onClick={handleCreateNew} className="bg-primary text-white text-xs md:text-sm font-bold px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 shadow-md transition">
                                 + Buat Baru
                             </button>
                         </div>
 
                         {myTrips && myTrips.length > 0 ? (
-                            myTrips.map((trip) => (
-                                <MyTripCard 
-                                    key={trip.id} 
-                                    trip={trip} 
-                                    onEdit={handleEditTrip}         
-                                    onDeleteSuccess={handleRefresh} 
-                                    onManage={() => handleManageParticipants(trip.id)} 
-                                />
-                            ))
+                            <div className="grid grid-cols-1 gap-4">
+                                {myTrips.map((trip) => (
+                                    <MyTripCard 
+                                        key={trip.id} 
+                                        trip={trip} 
+                                        onEdit={handleEditTrip}         
+                                        onDeleteSuccess={handleRefresh} 
+                                        onManage={() => handleManageParticipants(trip.id)} 
+                                    />
+                                ))}
+                            </div>
                         ) : (
                             <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
                                 <p className="text-gray-400 text-sm">Anda belum membuat ajakan pendakian.</p>
@@ -275,8 +301,8 @@ export default function CommunityPage({ data }) {
 
                 {/* HALAMAN TRIP DIIKUTI */}
                 {activePage === "joined" && (
-                    <div className="space-y-6 animate-in fade-in">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Rombongan Diikuti 🎒</h2>
+                    <div className="space-y-4 md:space-y-6 animate-in fade-in">
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Rombongan Diikuti 🎒</h2>
                         
                         {joinedTrips && joinedTrips.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

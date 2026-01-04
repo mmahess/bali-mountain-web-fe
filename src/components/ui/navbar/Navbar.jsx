@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import toast from "react-hot-toast"; // 1. Pastikan import ini ada
+import toast from "react-hot-toast";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState(null);
+  
+  // State untuk dropdown profil user
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  // State BARU: Untuk menu mobile (sandwich)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -18,8 +23,13 @@ export default function Navbar() {
     }
   }, []);
 
+  // Tutup menu mobile ketika pindah halaman
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
+  }, [pathname]);
+
   const handleLogout = () => {
-    // Hapus data session
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("role");
@@ -27,7 +37,6 @@ export default function Navbar() {
     setUser(null);
     setIsDropdownOpen(false);
     
-    // 2. GANTI ALERT DENGAN TOASTER DI SINI
     toast.success("Berhasil Logout. Sampai jumpa!", {
         icon: '👋',
         style: {
@@ -40,22 +49,30 @@ export default function Navbar() {
     router.push("/login");
   };
 
-  // ... (Sisa kode Navbar ke bawah sama persis, tidak perlu diubah) ...
-  
-  // Helper cek link aktif
   const isActive = (path) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
   };
 
+  // Class untuk Desktop
   const getLinkClass = (path) => {
     return isActive(path) ? "text-primary font-bold" : "hover:text-primary transition";
+  };
+
+  // Class untuk Mobile (lebih besar paddingnya)
+  const getMobileLinkClass = (path) => {
+    const baseClass = "block py-3 px-4 rounded-lg font-medium transition-colors";
+    return isActive(path) 
+      ? `${baseClass} bg-green-50 text-primary font-bold` 
+      : `${baseClass} text-gray-600 hover:bg-gray-50 hover:text-primary`;
   };
 
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2 group">
+        
+        {/* LOGO */}
+        <Link href="/" className="flex items-center gap-2 group z-50">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform">
             <img 
               src="/logo.png" 
@@ -63,7 +80,6 @@ export default function Navbar() {
               className="w-full h-full object-contain p-1" 
             />
           </div>
-          
           <div className="flex flex-col">
             <span className="text-lg font-black text-gray-800 leading-none group-hover:text-primary transition-colors">
               SobatMuncak
@@ -71,6 +87,7 @@ export default function Navbar() {
           </div>
         </Link>
 
+        {/* MENU DESKTOP (Hidden di Mobile) */}
         <div className="hidden md:flex gap-8 font-medium text-sm text-gray-500">
           <Link href="/" className={getLinkClass("/")}>Beranda</Link>
           <Link href="/gunung" className={getLinkClass("/gunung")}>Katalog Gunung</Link>
@@ -78,7 +95,10 @@ export default function Navbar() {
           <Link href="/berita" className={getLinkClass("/berita")}>Berita</Link>
         </div>
 
+        {/* BAGIAN KANAN: AUTH & HAMBURGER */}
         <div className="flex items-center gap-3">
+          
+          {/* USER PROFILE / LOGIN BUTTONS */}
           {user ? (
             <div className="relative">
               <button 
@@ -92,17 +112,20 @@ export default function Navbar() {
                     className="w-full h-full object-cover"
                   />
                 </div>
+                {/* Nama disembunyikan di HP biar ga sempit */}
                 <div className="text-left hidden sm:block">
                   <p className="text-xs font-bold text-gray-800 line-clamp-1">{user.name}</p>
                   <p className="text-[10px] text-gray-500 capitalize">{user.role}</p>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                {/* Chevron icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-gray-400 transition-transform hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`}>
                   <path d="m6 9 6 6 6-6"/>
                 </svg>
               </button>
 
+              {/* Dropdown User */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                   {user.role === 'admin' && (
                     <Link href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary font-medium">
                       📊 Dashboard Admin
@@ -122,13 +145,50 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <>
+            <div className="hidden sm:flex items-center gap-3">
+               {/* Login Button Desktop */}
               <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-primary px-4 py-2">Masuk</Link>
               <Link href="/register" className="bg-primary text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-green-700 transition shadow-xl shadow-green-200">Daftar Akun</Link>
-            </>
+            </div>
           )}
+
+          {/* TOMBOL HAMBURGER (Hanya muncul di Mobile) */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+          >
+             {isMobileMenuOpen ? (
+                // Icon X (Close)
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
+             ) : (
+                // Icon Menu (Sandwich)
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+             )}
+          </button>
         </div>
       </div>
+
+      {/* MENU MOBILE EXPANDABLE */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl py-4 px-4 flex flex-col gap-2 animate-in slide-in-from-top-5 duration-200">
+            <Link href="/" className={getMobileLinkClass("/")}>Beranda</Link>
+            <Link href="/gunung" className={getMobileLinkClass("/gunung")}>Katalog Gunung</Link>
+            <Link href="/komunitas" className={getMobileLinkClass("/komunitas")}>Komunitas</Link>
+            <Link href="/berita" className={getMobileLinkClass("/berita")}>Berita</Link>
+            
+            {/* Tombol Login/Register Mobile (Jika belum login) */}
+            {!user && (
+              <div className="flex flex-col gap-2 mt-2 border-t pt-4">
+                <Link href="/login" className="text-center w-full py-2.5 font-bold text-gray-600 border border-gray-200 rounded-full hover:bg-gray-50">
+                   Masuk
+                </Link>
+                <Link href="/register" className="text-center w-full py-2.5 font-bold text-white bg-primary rounded-full hover:bg-green-700">
+                   Daftar Akun
+                </Link>
+              </div>
+            )}
+        </div>
+      )}
     </nav>
   );
 }
