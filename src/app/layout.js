@@ -11,13 +11,13 @@ const poppins = Poppins({
 export const metadata = {
   title: "SobatMuncak - Teman Pendakianmu",
   description: "Platform komunitas pendaki gunung Indonesia",
+  icon: "/logo.png",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <body className={`${poppins.variable} font-sans antialiased`}>
-        {/* 2. Pasang Toaster di sini */}
         <Toaster 
           position="top-center" 
           reverseOrder={false}
