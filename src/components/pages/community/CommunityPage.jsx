@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import FeedTripCard from "@/components/ui/card/FeedTripCard";
 import MyTripCard from "@/components/ui/card/MyTripCard";
