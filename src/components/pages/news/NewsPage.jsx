@@ -10,7 +10,7 @@ export default function NewsPage({ data }) {
         {/* --- HEADER --- */}
         <header className="bg-white border-b border-gray-100 py-12 md:py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
-                <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-3">Jurnal Pendaki 📰</h1>
+                <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-3">Jurnal Pendaki</h1>
                 <p className="text-gray-500 text-lg">Info terbaru seputar jalur, tips survival, dan review alat pendakian.</p>
             </div>
         </header>

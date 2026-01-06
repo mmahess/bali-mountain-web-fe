@@ -2,14 +2,25 @@ import Link from "next/link";
 
 export default function CommunitySection({ trips, gallery }) {
   
-  // Format Tanggal
+  // 1. UPDATE FUNGSI FORMAT DATE (Lebih Aman)
   const formatDate = (dateString) => {
-    if(!dateString) return "-";
+    // Cek jika kosong
+    if (!dateString) return "-";
+    
+    // Coba convert ke Date object
     const date = new Date(dateString);
-    return date.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+
+    // Cek jika hasil convertnya "Invalid Date"
+    if (isNaN(date.getTime())) return "-";
+
+    return date.toLocaleDateString("id-ID", { 
+        day: "numeric", 
+        month: "short",
+        year: "numeric" // Opsional: Tambahkan tahun biar lebih jelas
+    });
   };
 
-  // Helper URL Gambar (Backend Laravel)
+  // Helper URL Gambar
   const getImageUrl = (filename) => {
     return filename ? `${process.env.NEXT_PUBLIC_API_URL}/storage/images/${filename}` : "https://via.placeholder.com/150";
   };
@@ -20,7 +31,7 @@ export default function CommunitySection({ trips, gallery }) {
         {/* Header Section */}
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Aktivitas Komunitas ⛺</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Aktivitas Komunitas</h2>
             <p className="text-gray-500 text-sm mt-1">Lihat siapa yang sedang mencari tim.</p>
           </div>
         </div>
@@ -62,9 +73,13 @@ export default function CommunitySection({ trips, gallery }) {
                     
                     {/* Badge Info */}
                     <div className="flex flex-wrap gap-2 text-[10px] font-bold text-gray-600">
-                      <span className="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                        🗓 {formatDate(trip.date)}
+                      
+                      {/* 2. UPDATE BAGIAN TANGGAL DISINI */}
+                      {/* Kita cek: trip.date ATAU trip.start_date ATAU trip.created_at */}
+                      <span className="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-1">
+                        🗓 {formatDate(trip.date || trip.start_date || trip.created_at)}
                       </span>
+                      
                       <span className="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
                         📍 {trip.destination || 'Lokasi'}
                       </span>
@@ -109,7 +124,6 @@ export default function CommunitySection({ trips, gallery }) {
                 {gallery && gallery.length > 0 ? (
                   gallery.slice(0, 4).map((item, idx) => (
                     <div key={item.id} className={`rounded-xl overflow-hidden relative group aspect-square`}>
-                         {/* FIX IMAGE URL DISINI */}
                          <img 
                             src={getImageUrl(item.image)} 
                             className="w-full h-full object-cover hover:scale-110 transition duration-500 cursor-pointer"

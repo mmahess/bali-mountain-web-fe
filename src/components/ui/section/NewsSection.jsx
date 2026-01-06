@@ -37,7 +37,7 @@ export default async function HomeNewsSection() {
         {/* Header Section */}
         <div className="flex justify-between items-end mb-10">
             <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Berita & Tips Pendakian 📰</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Berita & Tips Pendakian</h2>
                 <p className="text-gray-500">Update info jalur, tips survival, dan cerita pendaki.</p>
             </div>
             <Link href="/berita" className="text-primary font-bold hover:underline">
